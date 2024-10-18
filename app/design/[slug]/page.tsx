@@ -1,11 +1,12 @@
 import Editor from './components/editor';
+import { EditorProvider } from './providers/editor';
 
-const Design = () => {
+export default function Design() {
   return (
     <div className="h-full">
-      <Editor />
+      <EditorProvider>
+        <Editor />
+      </EditorProvider>
     </div>
   );
-};
-
-export default Design;
+}
