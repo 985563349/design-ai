@@ -1,14 +1,27 @@
 'use client';
 
+import { useMemo } from 'react';
 import { BsBorderWidth } from 'react-icons/bs';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import Hint from '@/components/hint';
 import { useEditorStore } from '../providers/editor-store-provider';
+import { useEditorController } from '../providers/editor-controller-provider';
 
 const Toolbar: React.FC = () => {
   const { activeTool, fillColor, strokeColor, setActiveTool } = useEditorStore((state) => state);
+  const { selectedObjects } = useEditorController();
+
+  const effectiveFillColor = useMemo(
+    () => (selectedObjects[0]?.get('fill') ?? fillColor) as string,
+    [selectedObjects, fillColor]
+  );
+
+  const effectiveStrokeColor = useMemo(
+    () => (selectedObjects[0]?.get('stroke') ?? strokeColor) as string,
+    [selectedObjects, strokeColor]
+  );
 
   return (
     <div className="flex items-center gap-2 border-b px-4 h-14 bg-white">
@@ -19,7 +32,7 @@ const Toolbar: React.FC = () => {
           size="icon"
           onClick={() => setActiveTool('fill')}
         >
-          <div className="border rounded-sm size-4" style={{ backgroundColor: fillColor }}></div>
+          <div className="border rounded-sm size-4" style={{ backgroundColor: effectiveFillColor }}></div>
         </Button>
       </Hint>
 
@@ -30,7 +43,7 @@ const Toolbar: React.FC = () => {
           size="icon"
           onClick={() => setActiveTool('stroke-color')}
         >
-          <div className="border rounded-sm size-4 bg-white" style={{ borderColor: strokeColor }}></div>
+          <div className="border rounded-sm size-4 bg-white" style={{ borderColor: effectiveStrokeColor }}></div>
         </Button>
       </Hint>
 

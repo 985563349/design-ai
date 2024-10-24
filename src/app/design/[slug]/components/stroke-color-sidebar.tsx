@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
 import ColorPicker from '@/components/color-picker';
@@ -7,8 +9,13 @@ import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
 
 const StrokeColorSidebar: React.FC = () => {
-  const { stage } = useEditorController();
+  const { stage, selectedObjects } = useEditorController();
   const { activeTool, strokeColor, setActiveTool, setStrokeColor } = useEditorStore((state) => state);
+
+  const effectiveStrokeColor = useMemo(
+    () => (selectedObjects[0]?.get('stroke') ?? strokeColor) as string,
+    [selectedObjects, strokeColor]
+  );
 
   const changeStrokeColor = (color: typeof strokeColor) => {
     if (stage) {
@@ -18,7 +25,6 @@ const StrokeColorSidebar: React.FC = () => {
       stage.freeDrawingBrush.color = color;
       stage.renderAll();
     }
-
     setStrokeColor(color);
   };
 
@@ -31,7 +37,7 @@ const StrokeColorSidebar: React.FC = () => {
     >
       <ScrollArea className="w-80">
         <div className="p-4">
-          <ColorPicker value={strokeColor} onChange={changeStrokeColor} />
+          <ColorPicker value={effectiveStrokeColor} onChange={changeStrokeColor} />
         </div>
       </ScrollArea>
     </Drawer>

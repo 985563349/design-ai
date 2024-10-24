@@ -1,7 +1,11 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import * as material from 'material-colors';
-import { ChromePicker, CirclePicker } from 'react-color';
+import type { RGBColor } from 'react-color';
+
+const ChromePicker = dynamic(() => import('react-color').then((mod) => ({ default: mod.ChromePicker })), { ssr: false });
+const CirclePicker = dynamic(() => import('react-color').then((mod) => ({ default: mod.CirclePicker })), { ssr: false });
 
 const colors = [
   material.red['500'],
@@ -25,6 +29,16 @@ const colors = [
   'transparent',
 ];
 
+const rgbaObjectToString = (rgba: RGBColor | 'transparent') => {
+  if (rgba === 'transparent') {
+    return 'rgba(0, 0, 0, 0)';
+  }
+
+  const alpha = rgba.a ?? 1;
+
+  return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${alpha})`;
+};
+
 export interface ColorPickerProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -36,13 +50,13 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange }) => {
       <ChromePicker
         className="border !rounded-lg !w-auto !shadow-none !overflow-hidden"
         color={value}
-        onChange={(color) => onChange?.(color.hex)}
+        onChange={(color) => onChange?.(rgbaObjectToString(color.rgb))}
       />
       <CirclePicker
         className="!w-auto"
         color={value}
         colors={colors}
-        onChangeComplete={(color) => onChange?.(color.hex)}
+        onChangeComplete={(color) => onChange?.(rgbaObjectToString(color.rgb))}
       />
     </div>
   );

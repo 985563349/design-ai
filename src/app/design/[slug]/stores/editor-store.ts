@@ -30,8 +30,8 @@ export type EditorStore = EditorState & EditorActions;
 
 export const defaultInitState: EditorState = {
   activeTool: 'select',
-  fillColor: '#000000',
-  strokeColor: '#000000',
+  fillColor: 'rgba(0, 0, 0, 1)',
+  strokeColor: 'rgba(0, 0, 0, 1)',
   strokeWidth: 2,
 };
 

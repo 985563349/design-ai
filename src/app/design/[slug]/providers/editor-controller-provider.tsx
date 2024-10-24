@@ -23,18 +23,13 @@ export const EditorControllerProvider: React.FC<EditorControllerProps> = ({ stag
     stage.on('selection:cleared', () => setSelectedObjects([]));
 
     return () => {
-      console.log('解绑');
       stage.off('selection:created');
       stage.off('selection:updated');
       stage.off('selection:cleared');
     };
   }, [stage]);
 
-  console.log(selectedObjects);
-
-  return (
-    <EditorControllerContext.Provider value={{ stage, selectedObjects }}>{children}</EditorControllerContext.Provider>
-  );
+  return <EditorControllerContext.Provider value={{ stage, selectedObjects }}>{children}</EditorControllerContext.Provider>;
 };
 
 export function useEditorController() {

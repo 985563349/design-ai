@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
 import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
-import { createCircle, createRectangle, createTriangle } from '../utils/shape';
+import { createCircle, createRectangle, createTriangle } from '../helpers/shape';
 
 const ShapeTool: React.FC<{
   icon: LucideIcon | IconType;
@@ -24,7 +24,7 @@ const ShapeTool: React.FC<{
 
 const ShapeSidebar: React.FC = () => {
   const { stage } = useEditorController();
-  const { activeTool, fillColor, setActiveTool } = useEditorStore((state) => state);
+  const { activeTool, fillColor, strokeColor, setActiveTool } = useEditorStore((state) => state);
 
   const addShapeToStage = (shape: fabric.Object) => {
     if (!stage) return;
@@ -41,15 +41,15 @@ const ShapeSidebar: React.FC = () => {
   };
 
   const addCircle = () => {
-    addShapeToStage(createCircle({ fill: fillColor }));
+    addShapeToStage(createCircle({ fill: fillColor, stroke: strokeColor }));
   };
 
   const addRectangle = () => {
-    addShapeToStage(createRectangle({ fill: fillColor }));
+    addShapeToStage(createRectangle({ fill: fillColor, stroke: strokeColor }));
   };
 
   const addTriangle = () => {
-    addShapeToStage(createTriangle({ fill: fillColor }));
+    addShapeToStage(createTriangle({ fill: fillColor, stroke: strokeColor }));
   };
 
   return (

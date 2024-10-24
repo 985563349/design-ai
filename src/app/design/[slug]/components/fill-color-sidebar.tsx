@@ -12,7 +12,10 @@ const FillColorSidebar: React.FC = () => {
   const { stage, selectedObjects } = useEditorController();
   const { activeTool, fillColor, setActiveTool, setFillColor } = useEditorStore((state) => state);
 
-  const activeFillColor = useMemo(() => selectedObjects[0]?.get('fill') ?? fillColor, [selectedObjects, fillColor]);
+  const effectiveFillColor = useMemo(
+    () => (selectedObjects[0]?.get('fill') ?? fillColor) as string,
+    [selectedObjects, fillColor]
+  );
 
   const changeFillColor = (color: typeof fillColor) => {
     if (stage) {
@@ -31,7 +34,7 @@ const FillColorSidebar: React.FC = () => {
     >
       <ScrollArea className="w-80">
         <div className="p-4">
-          <ColorPicker value={activeFillColor as string} onChange={changeFillColor} />
+          <ColorPicker value={effectiveFillColor} onChange={changeFillColor} />
         </div>
       </ScrollArea>
     </Drawer>

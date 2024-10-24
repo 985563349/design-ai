@@ -8,7 +8,7 @@ import Drawer from '@/components/drawer';
 import { useEditorStore } from '../providers/editor-store-provider';
 
 const StrokeWidthSidebar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditorStore((state) => state);
+  const { activeTool, strokeWidth, setActiveTool } = useEditorStore((state) => state);
 
   return (
     <Drawer
@@ -20,7 +20,7 @@ const StrokeWidthSidebar: React.FC = () => {
       <ScrollArea className="w-80">
         <div className="space-y-4 p-4 border-b">
           <Label className="text-sm">Stroke width</Label>
-          <Slider />
+          <Slider value={[strokeWidth]} />
         </div>
 
         <div className="space-y-4 p-4 border-b">
