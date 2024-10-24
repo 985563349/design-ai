@@ -27,7 +27,7 @@ export function useEditorStore<T>(selector: (state: EditorStore) => T) {
   const context = useContext(EditorStoreContext);
 
   if (!context) {
-    throw new Error('useEditorStore  must be used within EditorStoreProvider');
+    throw new Error('useEditorStore must be used within EditorStoreProvider');
   }
 
   return useStore(context, selector);

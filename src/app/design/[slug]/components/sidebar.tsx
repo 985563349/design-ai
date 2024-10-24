@@ -28,13 +28,13 @@ const SidebarItem: React.FC<{
 const Sidebar: React.FC = () => {
   const { activeTool, setActiveTool } = useEditorStore((state) => state);
 
-  const changeActiveTool = (newActiveTool: typeof activeTool) => {
-    if (newActiveTool === activeTool) {
+  const changeActiveTool = (tool: typeof activeTool) => {
+    if (tool === activeTool) {
       setActiveTool('select');
       return;
     }
 
-    setActiveTool(newActiveTool);
+    setActiveTool(tool);
   };
 
   return (
