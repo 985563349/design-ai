@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
   const { activeTool, setActiveTool } = useEditorStore((state) => state);
 
   return (
-    <nav className="flex items-center border-b px-4 h-12 bg-white">
+    <nav className="flex items-center border-b px-4 h-14 bg-white">
       <div className="mr-4">
         <Link href="/">Logo</Link>
       </div>

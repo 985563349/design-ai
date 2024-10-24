@@ -19,7 +19,7 @@ const ShapeTool: React.FC<{
   );
 };
 
-const ShapeToolSidebar: React.FC = () => {
+const ShapeSidebar: React.FC = () => {
   const { activeTool, setActiveTool } = useEditorStore((state) => state);
 
   const onClose = () => {
@@ -41,4 +41,4 @@ const ShapeToolSidebar: React.FC = () => {
   );
 };
 
-export default ShapeToolSidebar;
+export default ShapeSidebar;
