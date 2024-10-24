@@ -5,7 +5,7 @@ import type { LucideIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useEditor } from '../providers/editor';
+import { useEditorStore } from '../providers/editor-store-provider';
 
 const SidebarItem: React.FC<{
   label: string;
@@ -26,7 +26,16 @@ const SidebarItem: React.FC<{
 };
 
 const Sidebar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditor();
+  const { activeTool, setActiveTool } = useEditorStore((state) => state);
+
+  const changeActiveTool = (newActiveTool: typeof activeTool) => {
+    if (newActiveTool === activeTool) {
+      setActiveTool('select');
+      return;
+    }
+
+    setActiveTool(newActiveTool);
+  };
 
   return (
     <aside className="flex flex-col w-20 h-full border-r bg-white overflow-y-auto">
@@ -34,32 +43,32 @@ const Sidebar: React.FC = () => {
         label="Design"
         icon={LayoutTemplate}
         active={activeTool === 'templates'}
-        onClick={() => setActiveTool('templates')}
+        onClick={() => changeActiveTool('templates')}
       />
 
       <SidebarItem
         label="Image"
         icon={ImageIcon}
         active={activeTool === 'images'}
-        onClick={() => setActiveTool('images')}
+        onClick={() => changeActiveTool('images')}
       />
 
-      <SidebarItem label="Text" icon={Type} active={activeTool === 'text'} onClick={() => setActiveTool('text')} />
+      <SidebarItem label="Text" icon={Type} active={activeTool === 'text'} onClick={() => changeActiveTool('text')} />
 
       <SidebarItem
         label="Shapes"
         icon={Shapes}
         active={activeTool === 'shapes'}
-        onClick={() => setActiveTool('shapes')}
+        onClick={() => changeActiveTool('shapes')}
       />
 
-      <SidebarItem label="AI" icon={Sparkles} active={activeTool === 'ai'} onClick={() => setActiveTool('ai')} />
+      <SidebarItem label="AI" icon={Sparkles} active={activeTool === 'ai'} onClick={() => changeActiveTool('ai')} />
 
       <SidebarItem
         label="Settings"
         icon={Settings}
         active={activeTool === 'settings'}
-        onClick={() => setActiveTool('settings')}
+        onClick={() => changeActiveTool('settings')}
       />
     </aside>
   );

@@ -3,6 +3,7 @@ import { ChevronDown, MousePointerClick, Undo2, Redo2, Download } from 'lucide-r
 import { CiFileOn } from 'react-icons/ci';
 import { BsCloudCheck } from 'react-icons/bs';
 
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,9 +12,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
-import Hint from './hint';
+import Hint from '@/components/hint';
+import { useEditorStore } from '../providers/editor-store-provider';
 
 const Navbar: React.FC = () => {
+  const { activeTool, setActiveTool } = useEditorStore((state) => state);
+
   return (
     <nav className="flex items-center border-b px-4 h-12 bg-white">
       <div className="mr-4">
@@ -43,7 +47,12 @@ const Navbar: React.FC = () => {
         <Separator orientation="vertical" className="mx-2" />
 
         <Hint label="Select" sideOffset={10}>
-          <Button variant="ghost" size="icon">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(activeTool === 'select' && 'bg-gray-100')}
+            onClick={() => setActiveTool('select')}
+          >
             <MousePointerClick />
           </Button>
         </Hint>

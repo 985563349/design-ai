@@ -1,7 +1,7 @@
 import { ChevronsLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface ToolSidebarProps {
+export interface DrawerProps {
   visible?: boolean;
   className?: string;
   title: string;
@@ -10,7 +10,7 @@ export interface ToolSidebarProps {
   onClose?: () => void;
 }
 
-const ToolSidebar: React.FC<ToolSidebarProps> = ({ visible, className, title, description, children, onClose }) => {
+const Drawer: React.FC<DrawerProps> = ({ visible, className, title, description, children, onClose }) => {
   return (
     <aside className={cn('relative z-10 flex flex-col h-full border-r bg-white', className, !visible && 'hidden')}>
       <div className="p-4 border-b space-y-1">
@@ -30,4 +30,4 @@ const ToolSidebar: React.FC<ToolSidebarProps> = ({ visible, className, title, de
   );
 };
 
-export default ToolSidebar;
+export default Drawer;

@@ -10,15 +10,10 @@ export interface StageProps {
 const Stage: React.FC<StageProps> = ({ onInit }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
   const onInitRef = useRef(onInit);
 
-  useEffect(() => {
-    if (!containerRef.current || !canvasRef.current) {
-      return;
-    }
-
-    const stage = new fabric.Canvas(canvasRef.current, { controlsAboveOverlay: true, preserveObjectStacking: true });
+  const createStage = (container: HTMLElement, canvas: HTMLCanvasElement) => {
+    const stage = new fabric.Canvas(canvas, { controlsAboveOverlay: true, preserveObjectStacking: true });
 
     fabric.Object.prototype.set({
       cornerColor: '#fff',
@@ -30,7 +25,7 @@ const Stage: React.FC<StageProps> = ({ onInit }) => {
       cornerStrokeColor: '#3b82f6',
     });
 
-    const { width, height } = containerRef.current.getBoundingClientRect();
+    const { width, height } = container.getBoundingClientRect();
 
     stage.setWidth(width);
     stage.setHeight(height);
@@ -52,43 +47,55 @@ const Stage: React.FC<StageProps> = ({ onInit }) => {
     stage.centerObject(workspace);
     stage.clipPath = workspace;
 
-    const resizeObserverCallback = (entries: ResizeObserverEntry[]) => {
-      const { width, height } = entries[0].contentRect;
+    return stage;
+  };
 
-      stage.setWidth(width);
-      stage.setHeight(height);
+  const resizeStageToContainerSize = (container: HTMLElement, stage: fabric.Canvas) => {
+    const { width, height } = container.getBoundingClientRect();
 
-      const zoomRatio = 0.85;
-      const center = stage.getCenter();
-      const workspace = stage.getObjects().find((obj) => obj.name === 'workspace');
+    stage.setWidth(width);
+    stage.setHeight(height);
 
-      // @ts-ignore
-      const scale = fabric.util.findScaleToFit(workspace, { width, height });
-      const zoom = zoomRatio * scale;
+    const zoomRatio = 0.85;
+    const center = stage.getCenter();
+    const workspace = stage.getObjects().find((obj) => obj.name === 'workspace');
 
-      stage.setViewportTransform(fabric.iMatrix.concat());
-      stage.zoomToPoint(new fabric.Point(center.left, center.top), zoom);
+    if (!workspace) return;
 
-      if (!workspace) return;
+    // @ts-ignore
+    const scale = fabric.util.findScaleToFit(workspace, { width, height });
+    const zoom = zoomRatio * scale;
 
-      const workspaceCenter = workspace.getCenterPoint();
-      const viewportTransform = stage.viewportTransform;
+    stage.setViewportTransform(fabric.iMatrix.concat());
+    stage.zoomToPoint(new fabric.Point(center.left, center.top), zoom);
 
-      if (stage.width === undefined || stage.height === undefined || !viewportTransform) return;
+    const workspaceCenter = workspace.getCenterPoint();
+    const viewportTransform = stage.viewportTransform;
 
-      viewportTransform[4] = stage.width / 2 - workspaceCenter.x * viewportTransform[0];
-      viewportTransform[5] = stage.height / 2 - workspaceCenter.y * viewportTransform[3];
-      stage.setViewportTransform(viewportTransform);
+    if (stage.width === undefined || stage.height === undefined || !viewportTransform) return;
 
-      workspace.clone((cloned: fabric.Object) => {
-        stage.clipPath = cloned;
-        stage.requestRenderAll();
-      });
-    };
+    viewportTransform[4] = stage.width / 2 - workspaceCenter.x * viewportTransform[0];
+    viewportTransform[5] = stage.height / 2 - workspaceCenter.y * viewportTransform[3];
+    stage.setViewportTransform(viewportTransform);
 
-    const resizeObserver = new ResizeObserver(resizeObserverCallback);
-    resizeObserver.observe(containerRef.current);
+    workspace.clone((cloned: fabric.Object) => {
+      stage.clipPath = cloned;
+      stage.requestRenderAll();
+    });
+  };
 
+  useEffect(() => {
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+
+    if (!container || !canvas) {
+      return;
+    }
+
+    const stage = createStage(container, canvas);
+    const resizeObserver = new ResizeObserver(() => resizeStageToContainerSize(container, stage));
+
+    resizeObserver.observe(container);
     onInitRef.current?.(stage);
 
     return () => {
