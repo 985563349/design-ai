@@ -18,14 +18,18 @@ export const EditorControllerProvider: React.FC<EditorControllerProps> = ({ stag
   useEffect(() => {
     if (!stage) return;
 
-    stage.on('selection:created', (e) => setSelectedObjects(e.selected ?? []));
-    stage.on('selection:updated', (e) => setSelectedObjects(e.selected ?? []));
-    stage.on('selection:cleared', () => setSelectedObjects([]));
+    const onSelectionCreated = (e: fabric.IEvent) => setSelectedObjects(e.selected ?? []);
+    const onSelectionUpdated = (e: fabric.IEvent) => setSelectedObjects(e.selected ?? []);
+    const onSelectionCleared = () => setSelectedObjects([]);
+
+    stage.on('selection:created', onSelectionCreated);
+    stage.on('selection:updated', onSelectionUpdated);
+    stage.on('selection:cleared', onSelectionCleared);
 
     return () => {
-      stage.off('selection:created');
-      stage.off('selection:updated');
-      stage.off('selection:cleared');
+      stage.off('selection:created', onSelectionCreated);
+      stage.off('selection:updated', onSelectionUpdated);
+      stage.off('selection:cleared', onSelectionUpdated);
     };
   }, [stage]);
 

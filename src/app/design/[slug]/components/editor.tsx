@@ -11,6 +11,7 @@ import StrokeWidthSidebar from './stroke-width-sidebar';
 import Toolbar from './toolbar';
 import Footer from './footer';
 import Stage from './stage';
+import EditorEventListener from './editor-event-listener';
 
 import { EditorStoreProvider } from '../providers/editor-store-provider';
 import { EditorControllerProvider } from '../providers/editor-controller-provider';
@@ -38,6 +39,7 @@ const Editor: React.FC = () => {
             </main>
           </div>
         </div>
+        <EditorEventListener />
       </EditorControllerProvider>
     </EditorStoreProvider>
   );
