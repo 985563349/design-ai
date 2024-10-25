@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useEditorController } from '../providers/editor-controller-provider';
 import { useEditorStore } from '../providers/editor-store-provider';
 
-const selectionDependentTools = ['fill', 'stroke-color', 'stroke-width'];
+const selectionDependentTools = ['fill', 'stroke-color', 'stroke-width', 'opacity'];
 
 const EditorEventListener: React.FC = () => {
   const { activeTool, setActiveTool } = useEditorStore((state) => state);

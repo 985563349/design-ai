@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { BsBorderWidth } from 'react-icons/bs';
+import { RxTransparencyGrid } from 'react-icons/rx';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -95,6 +96,17 @@ const Toolbar: React.FC = () => {
         <Hint label="Send backwards" side="bottom" sideOffset={5}>
           <Button variant="ghost" size="icon" onClick={() => sendBackwards()}>
             <ArrowDown />
+          </Button>
+        </Hint>
+
+        <Hint label="Opacity" side="bottom" sideOffset={5}>
+          <Button
+            className={cn(activeTool === 'opacity' && 'bg-gray-100')}
+            variant="ghost"
+            size="icon"
+            onClick={() => setActiveTool('opacity')}
+          >
+            <RxTransparencyGrid />
           </Button>
         </Hint>
       </div>

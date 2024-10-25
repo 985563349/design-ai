@@ -10,7 +10,8 @@ type ActiveTool =
   | 'settings'
   | 'fill'
   | 'stroke-color'
-  | 'stroke-width';
+  | 'stroke-width'
+  | 'opacity';
 
 export type EditorState = {
   activeTool: ActiveTool;
