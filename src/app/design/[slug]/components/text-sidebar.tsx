@@ -2,9 +2,9 @@
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
+import { Button } from '@/components/ui/button';
 import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
-import { Button } from '@/components/ui/button';
 import { createText } from '../helpers/graphics';
 
 const TextSidebar: React.FC = () => {

@@ -13,5 +13,5 @@ export const createTriangle = (options?: fabric.ITriangleOptions) => {
 };
 
 export const createText = (value: string, options?: fabric.ITextboxOptions) => {
-  return new fabric.Textbox(value, { type: 'textbox', ...options });
+  return new fabric.Textbox(value, { type: 'text', fontSize: 32, fontFamily: 'Arial', ...options });
 };

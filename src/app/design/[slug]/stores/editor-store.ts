@@ -11,7 +11,8 @@ type ActiveTool =
   | 'fill'
   | 'stroke-color'
   | 'stroke-width'
-  | 'opacity';
+  | 'opacity'
+  | 'font';
 
 export type EditorState = {
   activeTool: ActiveTool;

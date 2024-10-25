@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronDown } from 'lucide-react';
 import { BsBorderWidth } from 'react-icons/bs';
 import { RxTransparencyGrid } from 'react-icons/rx';
 
@@ -12,7 +12,7 @@ import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
 
 const Toolbar: React.FC = () => {
-  const { activeTool, fillColor, strokeColor, setActiveTool } = useEditorStore((state) => state);
+  const { activeTool, fillColor, strokeColor, fontFamily, setActiveTool } = useEditorStore((state) => state);
   const { stage, selectedObjects } = useEditorController();
 
   const effectiveFillColor = useMemo(
@@ -23,6 +23,12 @@ const Toolbar: React.FC = () => {
   const effectiveStrokeColor = useMemo(
     () => (selectedObjects[0]?.get('stroke') ?? strokeColor) as string,
     [selectedObjects, strokeColor]
+  );
+
+  const effectiveFontFamily = useMemo(
+    // @ts-ignore
+    () => (selectedObjects[0]?.get('fontFamily') ?? fontFamily) as string,
+    [selectedObjects, fontFamily]
   );
 
   const bringForward = () => {
@@ -52,8 +58,8 @@ const Toolbar: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center gap-2 border-b px-4 h-14 bg-white">
-      <div className={cn(!selectedObjects.length && 'hidden')}>
+    <div className="border-b h-14 bg-white">
+      <div className={cn('flex items-center gap-2 px-4 h-full', !selectedObjects.length && 'hidden')}>
         <Hint label="Color" side="bottom" sideOffset={5}>
           <Button
             className={cn(activeTool === 'fill' && 'bg-gray-100')}
@@ -73,6 +79,18 @@ const Toolbar: React.FC = () => {
             onClick={() => setActiveTool('stroke-color')}
           >
             <div className="border rounded-sm size-4 bg-white" style={{ borderColor: effectiveStrokeColor }}></div>
+          </Button>
+        </Hint>
+
+        <Hint label="Font" side="bottom" sideOffset={5}>
+          <Button
+            className={cn('px-2 w-auto text-sm', activeTool === 'font' && 'bg-gray-100')}
+            variant="ghost"
+            size="icon"
+            onClick={() => setActiveTool('font')}
+          >
+            <span className="truncate">{effectiveFontFamily}</span>
+            <ChevronDown />
           </Button>
         </Hint>
 
