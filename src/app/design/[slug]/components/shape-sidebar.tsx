@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
 import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
-import { createCircle, createRectangle, createTriangle } from '../helpers/shape';
+import { createCircle, createRectangle, createTriangle } from '../helpers/graphics';
 
 const ShapeTool: React.FC<{
   icon: LucideIcon | IconType;

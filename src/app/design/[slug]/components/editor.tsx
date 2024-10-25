@@ -9,6 +9,7 @@ import FillColorSidebar from './fill-color-sidebar';
 import StrokeColorSidebar from './stroke-color-sidebar';
 import StrokeWidthSidebar from './stroke-width-sidebar';
 import OpacitySidebar from './opacity-sidebar';
+import TextSidebar from './text-sidebar';
 import Toolbar from './toolbar';
 import Footer from './footer';
 import Stage from './stage';
@@ -32,6 +33,7 @@ const Editor: React.FC = () => {
             <StrokeColorSidebar />
             <StrokeWidthSidebar />
             <OpacitySidebar />
+            <TextSidebar />
             <main className="flex-1 flex flex-col overflow-hidden">
               <Toolbar />
               <div className="flex-1 overflow-hidden bg-slate-100">

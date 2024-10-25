@@ -11,3 +11,7 @@ export const createRectangle = (options?: fabric.IRectOptions) => {
 export const createTriangle = (options?: fabric.ITriangleOptions) => {
   return new fabric.Triangle({ width: 200, height: 200, ...options });
 };
+
+export const createText = (value: string, options?: fabric.ITextboxOptions) => {
+  return new fabric.Textbox(value, { type: 'textbox', ...options });
+};
