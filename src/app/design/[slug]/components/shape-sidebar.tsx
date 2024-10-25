@@ -24,7 +24,7 @@ const ShapeTool: React.FC<{
 
 const ShapeSidebar: React.FC = () => {
   const { stage } = useEditorController();
-  const { activeTool, fillColor, strokeColor, setActiveTool } = useEditorStore((state) => state);
+  const { activeTool, fillColor, strokeColor, strokeWidth, strokeDashArray, setActiveTool } = useEditorStore((state) => state);
 
   const addShapeToStage = (shape: fabric.Object) => {
     if (!stage) return;
@@ -41,15 +41,15 @@ const ShapeSidebar: React.FC = () => {
   };
 
   const addCircle = () => {
-    addShapeToStage(createCircle({ fill: fillColor, stroke: strokeColor }));
+    addShapeToStage(createCircle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
   };
 
   const addRectangle = () => {
-    addShapeToStage(createRectangle({ fill: fillColor, stroke: strokeColor }));
+    addShapeToStage(createRectangle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
   };
 
   const addTriangle = () => {
-    addShapeToStage(createTriangle({ fill: fillColor, stroke: strokeColor }));
+    addShapeToStage(createTriangle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
   };
 
   return (

@@ -17,6 +17,7 @@ export type EditorState = {
   fillColor: string;
   strokeColor: string;
   strokeWidth: number;
+  strokeDashArray: number[];
 };
 
 export type EditorActions = {
@@ -24,6 +25,7 @@ export type EditorActions = {
   setFillColor: (fillColor: string) => void;
   setStrokeColor: (strokeColor: string) => void;
   setStrokeWidth: (strokeWidth: number) => void;
+  setStrokeDashArray: (strokeDashArray: number[]) => void;
 };
 
 export type EditorStore = EditorState & EditorActions;
@@ -33,6 +35,7 @@ export const defaultInitState: EditorState = {
   fillColor: 'rgba(0, 0, 0, 1)',
   strokeColor: 'rgba(0, 0, 0, 1)',
   strokeWidth: 2,
+  strokeDashArray: [],
 };
 
 export const createEditorStore = (initState: EditorState = defaultInitState) => {
@@ -42,5 +45,6 @@ export const createEditorStore = (initState: EditorState = defaultInitState) => 
     setFillColor: (fillColor) => set({ fillColor }),
     setStrokeColor: (strokeColor) => set({ strokeColor }),
     setStrokeWidth: (strokeWidth) => set({ strokeWidth }),
+    setStrokeDashArray: (strokeDashArray) => set({ strokeDashArray }),
   }));
 };
