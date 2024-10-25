@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 import { BsBorderWidth } from 'react-icons/bs';
 
 import { cn } from '@/lib/utils';
@@ -11,7 +12,7 @@ import { useEditorController } from '../providers/editor-controller-provider';
 
 const Toolbar: React.FC = () => {
   const { activeTool, fillColor, strokeColor, setActiveTool } = useEditorStore((state) => state);
-  const { selectedObjects } = useEditorController();
+  const { stage, selectedObjects } = useEditorController();
 
   const effectiveFillColor = useMemo(
     () => (selectedObjects[0]?.get('fill') ?? fillColor) as string,
@@ -22,6 +23,32 @@ const Toolbar: React.FC = () => {
     () => (selectedObjects[0]?.get('stroke') ?? strokeColor) as string,
     [selectedObjects, strokeColor]
   );
+
+  const bringForward = () => {
+    if (stage) {
+      stage.getActiveObjects().forEach((object) => {
+        stage.bringForward(object);
+      });
+
+      const workspace = stage.getObjects().find((object) => object.name === 'workspace');
+      workspace?.sendToBack();
+
+      stage.renderAll();
+    }
+  };
+
+  const sendBackwards = () => {
+    if (stage) {
+      stage.getActiveObjects().forEach((object) => {
+        stage.sendBackwards(object);
+      });
+
+      const workspace = stage.getObjects().find((object) => object.name === 'workspace');
+      workspace?.sendToBack();
+
+      stage.renderAll();
+    }
+  };
 
   return (
     <div className="flex items-center gap-2 border-b px-4 h-14 bg-white">
@@ -56,6 +83,18 @@ const Toolbar: React.FC = () => {
             onClick={() => setActiveTool('stroke-width')}
           >
             <BsBorderWidth />
+          </Button>
+        </Hint>
+
+        <Hint label="Bring forward" side="bottom" sideOffset={5}>
+          <Button variant="ghost" size="icon" onClick={() => bringForward()}>
+            <ArrowUp />
+          </Button>
+        </Hint>
+
+        <Hint label="Send backwards" side="bottom" sideOffset={5}>
+          <Button variant="ghost" size="icon" onClick={() => sendBackwards()}>
+            <ArrowDown />
           </Button>
         </Hint>
       </div>
