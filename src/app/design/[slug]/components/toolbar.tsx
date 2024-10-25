@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { ArrowDown, ArrowUp, ChevronDown } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronDown, Trash } from 'lucide-react';
 import { BsBorderWidth } from 'react-icons/bs';
 import { RxTransparencyGrid } from 'react-icons/rx';
 
@@ -57,6 +57,14 @@ const Toolbar: React.FC = () => {
     }
   };
 
+  const remove = () => {
+    if (stage) {
+      stage.getActiveObjects().forEach((object) => stage.remove(object));
+      stage.discardActiveObject();
+      stage.renderAll();
+    }
+  };
+
   return (
     <div className="border-b h-14 bg-white">
       <div className={cn('flex items-center gap-2 px-4 h-full', !selectedObjects.length && 'hidden')}>
@@ -106,13 +114,13 @@ const Toolbar: React.FC = () => {
         </Hint>
 
         <Hint label="Bring forward" side="bottom" sideOffset={5}>
-          <Button variant="ghost" size="icon" onClick={() => bringForward()}>
+          <Button variant="ghost" size="icon" onClick={bringForward}>
             <ArrowUp />
           </Button>
         </Hint>
 
         <Hint label="Send backwards" side="bottom" sideOffset={5}>
-          <Button variant="ghost" size="icon" onClick={() => sendBackwards()}>
+          <Button variant="ghost" size="icon" onClick={sendBackwards}>
             <ArrowDown />
           </Button>
         </Hint>
@@ -125,6 +133,12 @@ const Toolbar: React.FC = () => {
             onClick={() => setActiveTool('opacity')}
           >
             <RxTransparencyGrid />
+          </Button>
+        </Hint>
+
+        <Hint label="Delete" side="bottom" sideOffset={5}>
+          <Button variant="ghost" size="icon" onClick={remove}>
+            <Trash />
           </Button>
         </Hint>
       </div>
