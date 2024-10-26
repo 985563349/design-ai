@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { ArrowDown, ArrowUp, ChevronDown, Trash } from 'lucide-react';
 import { BsBorderWidth } from 'react-icons/bs';
 import { RxTransparencyGrid } from 'react-icons/rx';
+import { TbColorFilter } from 'react-icons/tb';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -110,6 +111,17 @@ const Toolbar: React.FC = () => {
             onClick={() => setActiveTool('stroke-width')}
           >
             <BsBorderWidth />
+          </Button>
+        </Hint>
+
+        <Hint label="Filters" side="bottom" sideOffset={5}>
+          <Button
+            className={cn(activeTool === 'filter' && 'bg-gray-100')}
+            variant="ghost"
+            size="icon"
+            onClick={() => setActiveTool('filter')}
+          >
+            <TbColorFilter />
           </Button>
         </Hint>
 
