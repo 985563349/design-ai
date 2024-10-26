@@ -31,7 +31,7 @@ const OpacitySidebar: React.FC = () => {
       onClose={() => setActiveTool('select')}
     >
       <ScrollArea className="w-80">
-        <div className="space-y-4 p-4 border-b">
+        <div className="space-y-4 p-4">
           <Slider value={[opacity]} min={0} max={1} step={0.01} onValueChange={(value) => changeOpacity(value[0])} />
         </div>
       </ScrollArea>

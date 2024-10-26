@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import Navbar from './navbar';
 import Sidebar from './sidebar';
+import ImageSidebar from './image-sidebar';
 import ShapeSidebar from './shape-sidebar';
 import FillColorSidebar from './fill-color-sidebar';
 import StrokeColorSidebar from './stroke-color-sidebar';
@@ -29,6 +30,7 @@ const Editor: React.FC = () => {
           <Navbar />
           <div className="flex-1 flex overflow-hidden">
             <Sidebar />
+            <ImageSidebar />
             <ShapeSidebar />
             <FillColorSidebar />
             <StrokeColorSidebar />
