@@ -1,7 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
 import ColorPicker from '@/components/color-picker';
@@ -12,17 +10,11 @@ const StrokeColorSidebar: React.FC = () => {
   const { activeTool, strokeColor, setActiveTool, setStrokeColor } = useEditorStore((state) => state);
   const { stage, selectedObjects } = useEditorController();
 
-  const effectiveStrokeColor = useMemo(
-    () => (selectedObjects[0]?.get('stroke') ?? strokeColor) as string,
-    [selectedObjects, strokeColor]
-  );
+  const effectiveStrokeColor = selectedObjects[0]?.get('stroke') ?? strokeColor;
 
   const changeStrokeColor = (color: typeof strokeColor) => {
     if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        object.set({ stroke: color });
-      });
-      stage.freeDrawingBrush.color = color;
+      stage.getActiveObjects().forEach((object) => object.set({ stroke: color }));
       stage.renderAll();
     }
     setStrokeColor(color);

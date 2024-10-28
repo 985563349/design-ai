@@ -1,7 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
 import ColorPicker from '@/components/color-picker';
@@ -12,10 +10,7 @@ const FillColorSidebar: React.FC = () => {
   const { activeTool, fillColor, setActiveTool, setFillColor } = useEditorStore((state) => state);
   const { stage, selectedObjects } = useEditorController();
 
-  const effectiveFillColor = useMemo(
-    () => (selectedObjects[0]?.get('fill') ?? fillColor) as string,
-    [selectedObjects, fillColor]
-  );
+  const effectiveFillColor = selectedObjects[0]?.get('fill') ?? fillColor;
 
   const changeFillColor = (color: typeof fillColor) => {
     if (stage) {
@@ -34,7 +29,7 @@ const FillColorSidebar: React.FC = () => {
     >
       <ScrollArea className="w-80">
         <div className="p-4">
-          <ColorPicker value={effectiveFillColor} onChange={changeFillColor} />
+          <ColorPicker value={effectiveFillColor as string} onChange={changeFillColor} />
         </div>
       </ScrollArea>
     </Drawer>

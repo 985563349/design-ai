@@ -1,11 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import Drawer from '@/components/drawer';
 import { Button } from '@/components/ui/button';
+import Drawer from '@/components/drawer';
 import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
 
@@ -34,11 +32,8 @@ const FontSidebar: React.FC = () => {
   const { activeTool, fontFamily, setActiveTool, setFontFamily } = useEditorStore((state) => state);
   const { stage, selectedObjects } = useEditorController();
 
-  const effectiveFontFamily = useMemo(
-    // @ts-ignore
-    () => (selectedObjects[0]?.get('fontFamily') ?? fontFamily) as string,
-    [selectedObjects, fontFamily]
-  );
+  // @ts-ignore
+  const effectiveFontFamily = selectedObjects[0]?.get('fontFamily') ?? fontFamily;
 
   const changeFontFamily = (font: typeof fontFamily) => {
     if (stage) {

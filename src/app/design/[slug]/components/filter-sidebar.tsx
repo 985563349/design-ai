@@ -38,18 +38,18 @@ const FilterSidebar: React.FC = () => {
   const { stage } = useEditorController();
 
   const changeFilter = (filter: string) => {
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'image') {
-          const imageObject = object as fabric.Image;
-          const effect = createFilter(filter);
+    if (!stage) return;
 
-          imageObject.filters = effect ? [effect] : [];
-          imageObject.applyFilters();
-        }
-      });
-      stage.renderAll();
-    }
+    stage.getActiveObjects().forEach((object) => {
+      if (object.type === 'image') {
+        const imageObject = object as fabric.Image;
+        const effect = createFilter(filter);
+
+        imageObject.filters = effect ? [effect] : [];
+        imageObject.applyFilters();
+      }
+    });
+    stage.renderAll();
   };
 
   return (

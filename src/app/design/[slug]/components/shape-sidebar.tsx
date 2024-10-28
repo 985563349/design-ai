@@ -1,6 +1,5 @@
 'use client';
 
-import { fabric } from 'fabric';
 import type { LucideIcon } from 'lucide-react';
 import { RiCircleFill, RiSquareFill, RiTriangleFill } from 'react-icons/ri';
 import type { IconType } from 'react-icons';
@@ -24,32 +23,18 @@ const ShapeTool: React.FC<{
 
 const ShapeSidebar: React.FC = () => {
   const { activeTool, fillColor, strokeColor, strokeWidth, strokeDashArray, setActiveTool } = useEditorStore((state) => state);
-  const { stage } = useEditorController();
-
-  const addShapeToStage = (shape: fabric.Object) => {
-    if (!stage) return;
-
-    const workspace = stage.getObjects().find((object) => object.name === 'workspace');
-    const center = workspace?.getCenterPoint();
-
-    if (!center) return;
-
-    // @ts-ignore
-    stage._centerObject(shape, center);
-    stage.setActiveObject(shape);
-    stage.add(shape);
-  };
+  const { add } = useEditorController();
 
   const addCircle = () => {
-    addShapeToStage(createCircle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
+    add(createCircle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
   };
 
   const addRectangle = () => {
-    addShapeToStage(createRectangle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
+    add(createRectangle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
   };
 
   const addTriangle = () => {
-    addShapeToStage(createTriangle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
+    add(createTriangle({ fill: fillColor, stroke: strokeColor, strokeWidth, strokeDashArray }));
   };
 
   return (
