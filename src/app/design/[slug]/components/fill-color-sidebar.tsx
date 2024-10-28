@@ -9,8 +9,8 @@ import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
 
 const FillColorSidebar: React.FC = () => {
-  const { stage, selectedObjects } = useEditorController();
   const { activeTool, fillColor, setActiveTool, setFillColor } = useEditorStore((state) => state);
+  const { stage, selectedObjects } = useEditorController();
 
   const effectiveFillColor = useMemo(
     () => (selectedObjects[0]?.get('fill') ?? fillColor) as string,

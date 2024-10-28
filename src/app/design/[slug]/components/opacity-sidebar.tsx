@@ -1,9 +1,9 @@
 'use client';
 
-import useDerivedState from '@/hooks/use-computed-state';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Slider } from '@/components/ui/slider';
 import Drawer from '@/components/drawer';
+import useDerivedState from '@/hooks/use-derived-state';
 import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
 

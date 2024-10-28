@@ -17,7 +17,7 @@ const StrokeWidthSidebar: React.FC = () => {
   );
   const { stage, selectedObjects } = useEditorController();
 
-  const effectiveStrokeColor = useMemo(
+  const effectiveStrokeWidth = useMemo(
     () => selectedObjects[0]?.get('strokeWidth') ?? strokeWidth,
     [selectedObjects, strokeWidth]
   );
@@ -60,7 +60,7 @@ const StrokeWidthSidebar: React.FC = () => {
       <ScrollArea className="w-80">
         <div className="space-y-4 p-4 border-b">
           <Label className="text-sm">Stroke width</Label>
-          <Slider value={[effectiveStrokeColor]} onValueChange={(value) => changeStrokeWidth(value[0])} />
+          <Slider value={[effectiveStrokeWidth]} onValueChange={(value) => changeStrokeWidth(value[0])} />
         </div>
 
         <div className="space-y-4 p-4 border-b">

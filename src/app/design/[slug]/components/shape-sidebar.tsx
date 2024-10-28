@@ -23,8 +23,8 @@ const ShapeTool: React.FC<{
 };
 
 const ShapeSidebar: React.FC = () => {
-  const { stage } = useEditorController();
   const { activeTool, fillColor, strokeColor, strokeWidth, strokeDashArray, setActiveTool } = useEditorStore((state) => state);
+  const { stage } = useEditorController();
 
   const addShapeToStage = (shape: fabric.Object) => {
     if (!stage) return;

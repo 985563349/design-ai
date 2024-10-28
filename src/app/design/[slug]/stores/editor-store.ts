@@ -6,6 +6,7 @@ type ActiveTool =
   | 'images'
   | 'text'
   | 'shapes'
+  | 'draw'
   | 'ai'
   | 'settings'
   | 'fill'

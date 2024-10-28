@@ -1,6 +1,6 @@
 'use client';
 
-import { Image as ImageIcon, LayoutTemplate, Settings, Shapes, Sparkles, Type } from 'lucide-react';
+import { Image as ImageIcon, LayoutTemplate, Pencil, Settings, Shapes, Sparkles, Type } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -46,21 +46,13 @@ const Sidebar: React.FC = () => {
         onClick={() => changeActiveTool('templates')}
       />
 
-      <SidebarItem
-        label="Image"
-        icon={ImageIcon}
-        active={activeTool === 'images'}
-        onClick={() => changeActiveTool('images')}
-      />
+      <SidebarItem label="Image" icon={ImageIcon} active={activeTool === 'images'} onClick={() => changeActiveTool('images')} />
 
       <SidebarItem label="Text" icon={Type} active={activeTool === 'text'} onClick={() => changeActiveTool('text')} />
 
-      <SidebarItem
-        label="Shapes"
-        icon={Shapes}
-        active={activeTool === 'shapes'}
-        onClick={() => changeActiveTool('shapes')}
-      />
+      <SidebarItem label="Shapes" icon={Shapes} active={activeTool === 'shapes'} onClick={() => changeActiveTool('shapes')} />
+
+      <SidebarItem label="Draw" icon={Pencil} active={activeTool === 'draw'} onClick={() => changeActiveTool('draw')} />
 
       <SidebarItem label="AI" icon={Sparkles} active={activeTool === 'ai'} onClick={() => changeActiveTool('ai')} />
 

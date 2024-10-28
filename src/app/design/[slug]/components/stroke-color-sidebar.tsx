@@ -9,8 +9,8 @@ import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
 
 const StrokeColorSidebar: React.FC = () => {
-  const { stage, selectedObjects } = useEditorController();
   const { activeTool, strokeColor, setActiveTool, setStrokeColor } = useEditorStore((state) => state);
+  const { stage, selectedObjects } = useEditorController();
 
   const effectiveStrokeColor = useMemo(
     () => (selectedObjects[0]?.get('stroke') ?? strokeColor) as string,
