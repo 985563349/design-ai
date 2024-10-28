@@ -14,6 +14,7 @@ import TextSidebar from './text-sidebar';
 import FontSidebar from './font-sidebar';
 import FilterSidebar from './filter-sidebar';
 import DrawSidebar from './draw-sidebar';
+import SettingsSidebar from './settings-sidebar';
 import Toolbar from './toolbar';
 import Footer from './footer';
 import Stage from './stage';
@@ -41,6 +42,7 @@ const Editor: React.FC = () => {
             <TextSidebar />
             <FontSidebar />
             <FilterSidebar />
+            <SettingsSidebar />
             <DrawSidebar />
             <main className="flex-1 flex flex-col overflow-hidden">
               <Toolbar />

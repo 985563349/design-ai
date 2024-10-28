@@ -96,10 +96,12 @@ const Stage: React.FC<StageProps> = ({ onInit }) => {
     const resizeObserver = new ResizeObserver(() => resizeStageToContainerSize(container, stage));
 
     resizeObserver.observe(container);
+    stage.on('resize', () => resizeStageToContainerSize(container, stage));
     onInitRef.current?.(stage);
 
     return () => {
       stage.dispose();
+      stage.off('resize');
       resizeObserver.disconnect();
     };
   }, []);
