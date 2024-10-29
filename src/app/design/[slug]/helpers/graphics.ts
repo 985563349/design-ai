@@ -13,7 +13,7 @@ export const createTriangle = (options?: fabric.ITriangleOptions) => {
 };
 
 export const createText = (value: string, options?: fabric.ITextboxOptions) => {
-  return new fabric.Textbox(value, { type: 'text', fontSize: 32, fontFamily: 'Arial', ...options });
+  return new fabric.Textbox(value, { type: 'text', fontSize: 32, fontWeight: 400, fontFamily: 'Arial', ...options });
 };
 
 export const createFilter = (value: string) => {

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import Drawer from '@/components/drawer';
+import useDerivedState from '@/hooks/use-derived-state';
 import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
 
@@ -29,11 +30,11 @@ const fonts = [
 ];
 
 const FontSidebar: React.FC = () => {
-  const { activeTool, fontFamily, setActiveTool, setFontFamily } = useEditorStore((state) => state);
+  const { activeTool, setActiveTool } = useEditorStore((state) => state);
   const { stage, selectedObjects } = useEditorController();
 
   // @ts-ignore
-  const effectiveFontFamily = selectedObjects[0]?.get('fontFamily') ?? fontFamily;
+  const [fontFamily, setFontFamily] = useDerivedState(() => selectedObjects[0]?.get('fontFamily'), [selectedObjects]);
 
   const changeFontFamily = (font: typeof fontFamily) => {
     if (stage) {
@@ -62,7 +63,7 @@ const FontSidebar: React.FC = () => {
               key={font}
               className={cn(
                 'justify-start border-2 border-transparent p-4  w-full h-16 text-base',
-                effectiveFontFamily === font && 'border-blue-500'
+                fontFamily === font && 'border-blue-500'
               )}
               variant="secondary"
               size="lg"
