@@ -38,7 +38,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside className="flex flex-col w-20 h-full border-r bg-white overflow-y-auto">
+    <aside className="flex flex-col w-18 h-full border-r bg-white overflow-y-auto">
       <SidebarItem
         label="Design"
         icon={LayoutTemplate}

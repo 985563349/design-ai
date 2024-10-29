@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { fabric } from 'fabric';
 
 export type EditorControllerApi = {
   stage?: fabric.Canvas;
@@ -10,6 +11,9 @@ export type EditorControllerApi = {
   paste: () => void;
   bringForward: () => void;
   sendBackwards: () => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  zoomReset: () => void;
   setWorkspaceBackground: (background: string) => void;
   setWorkspaceSize: (size: Record<'width' | 'height', number>) => void;
 };
@@ -103,6 +107,32 @@ export const EditorControllerProvider: React.FC<EditorControllerProps> = ({ stag
     stage.renderAll();
   };
 
+  const zoomIn = () => {
+    if (!stage) return;
+
+    let zoom = stage.getZoom();
+    zoom += 0.05;
+
+    const center = stage.getCenter();
+    stage.zoomToPoint(new fabric.Point(center.left, center.top), Math.min(zoom, 1));
+  };
+
+  const zoomOut = () => {
+    if (!stage) return;
+
+    let zoom = stage.getZoom();
+    zoom -= 0.05;
+
+    const center = stage.getCenter();
+    stage.zoomToPoint(new fabric.Point(center.left, center.top), Math.max(zoom, 0.2));
+  };
+
+  const zoomReset = () => {
+    if (!stage) return;
+
+    stage.fire('resize');
+  };
+
   const setWorkspaceBackground = (background: string) => {
     const workspace = getWorkspace();
 
@@ -151,6 +181,9 @@ export const EditorControllerProvider: React.FC<EditorControllerProps> = ({ stag
         paste,
         bringForward,
         sendBackwards,
+        zoomIn,
+        zoomOut,
+        zoomReset,
         setWorkspaceBackground,
         setWorkspaceSize,
       }}
