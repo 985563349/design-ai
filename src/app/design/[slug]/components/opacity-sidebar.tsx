@@ -14,12 +14,10 @@ const OpacitySidebar: React.FC = () => {
   const [opacity, setOpacity] = useDerivedState(() => selectedObjects[0]?.get('opacity') ?? 1, [selectedObjects]);
 
   const changeOpacity = (opacity: number) => {
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        object.set({ opacity });
-      });
-      stage.renderAll();
-    }
+    if (!stage) return;
+
+    stage.getActiveObjects().forEach((object) => object.set({ opacity }));
+    stage.renderAll();
     setOpacity(opacity);
   };
 

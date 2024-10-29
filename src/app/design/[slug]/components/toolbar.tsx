@@ -27,10 +27,8 @@ import useDerivedState from '@/hooks/use-derived-state';
 import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
 
-const selectionDependentTools = ['fill', 'stroke-color', 'font', 'stroke-width', 'opacity'];
-
 const Toolbar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditorStore((state) => state);
+  const { activeTool, fontFamily, setActiveTool } = useEditorStore((state) => state);
   const { stage, selectedObjects, copy, paste, bringForward, sendBackwards, remove } = useEditorController();
 
   const selectedObject = selectedObjects[0];
@@ -39,118 +37,60 @@ const Toolbar: React.FC = () => {
 
   const effectiveFillColor = selectedObject?.get('fill');
   const effectiveStrokeColor = selectedObject?.get('stroke');
+  // @ts-ignore
+  const effectiveFontFamily = selectedObject?.get('fontFamily') ?? fontFamily;
 
-  // @ts-ignore
-  const effectiveFontFamily = selectedObject?.get('fontFamily');
-  // @ts-ignore
-  const [fontWeight, setFontWeight] = useDerivedState(() => selectedObject?.get('fontWeight'), [selectedObject]);
-  // @ts-ignore
-  const [fontStyle, setFontStyle] = useDerivedState(() => selectedObject?.get('fontStyle'), [selectedObject]);
-  // @ts-ignore
-  const [underline, setUnderline] = useDerivedState(() => selectedObject?.get('underline'), [selectedObject]);
-  // @ts-ignore
-  const [strikethrough, setStrikethrough] = useDerivedState(() => selectedObject?.get('linethrough'), [selectedObject]);
-  // @ts-ignore
-  const [textAlign, setTextAlign] = useDerivedState(() => selectedObject?.get('textAlign'), [selectedObject]);
-  // @ts-ignore
-  const [fontSize, setFontSize] = useDerivedState(() => selectedObject?.get('fontSize') ?? 0, [selectedObject]);
+  const [textAttributes, setTextAttributes] = useDerivedState(() => {
+    const textObject = selectedObject as fabric.Text;
+
+    return {
+      fontWeight: textObject?.get('fontWeight') ?? 400,
+      fontStyle: textObject?.get('fontStyle'),
+      underline: textObject?.get('underline'),
+      linethrough: textObject?.get('linethrough'),
+      textAlign: textObject?.get('textAlign'),
+      fontSize: textObject?.get('fontSize') ?? 0,
+    };
+  }, [selectedObject]);
+
+  const changeTextAttributes = (attributes: Partial<typeof textAttributes>) => {
+    if (!stage) return;
+
+    stage.getActiveObjects().forEach((object) => {
+      if (object.type === 'text') {
+        // @ts-ignore
+        object.set(attributes);
+      }
+    });
+    stage.renderAll();
+
+    setTextAttributes((s) => ({ ...s, ...attributes }));
+  };
 
   const toggleBold = () => {
-    const newFontWeight = fontWeight === 'normal' || fontWeight <= 400 ? 700 : 400;
-
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'text') {
-          // @ts-ignore
-          // Faulty TS library, fontWeight exists.
-          object.set({ fontWeight: newFontWeight });
-        }
-      });
-      stage.renderAll();
-    }
-
-    setFontWeight(newFontWeight);
+    changeTextAttributes({
+      fontWeight: textAttributes.fontWeight === 'normal' || +textAttributes.fontWeight <= 400 ? 700 : 400,
+    });
   };
 
   const toggleItalic = () => {
-    const newFontStyle = fontStyle === 'italic' ? 'normal' : 'italic';
-
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'text') {
-          // @ts-ignore
-          // Faulty TS library, fontStyle exists.
-          object.set({ fontStyle: newFontStyle });
-        }
-      });
-      stage.renderAll();
-    }
-
-    setFontStyle(newFontStyle);
+    changeTextAttributes({ fontStyle: textAttributes.fontStyle === 'italic' ? 'normal' : 'italic' });
   };
 
   const toggleUnderline = () => {
-    const newUnderline = !underline;
-
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'text') {
-          // @ts-ignore
-          // Faulty TS library, underline exists.
-          object.set({ underline: newUnderline });
-        }
-      });
-      stage.renderAll();
-    }
-
-    setUnderline(newUnderline);
+    changeTextAttributes({ underline: !textAttributes.underline });
   };
 
   const toggleStrikethrough = () => {
-    const newStrikethrough = !strikethrough;
-
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'text') {
-          // @ts-ignore
-          // Faulty TS library, linethrough exists.
-          object.set({ linethrough: newStrikethrough });
-        }
-      });
-      stage.renderAll();
-    }
-
-    setStrikethrough(newStrikethrough);
+    changeTextAttributes({ linethrough: !textAttributes.linethrough });
   };
 
   const changeTextAlign = (align: string) => {
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'text') {
-          // @ts-ignore
-          // Faulty TS library, textAlign exists.
-          object.set({ textAlign: align });
-        }
-      });
-      stage.renderAll();
-    }
-
-    setTextAlign(align);
+    changeTextAttributes({ textAlign: align });
   };
 
   const changeFontSize = (size: number) => {
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'text') {
-          // @ts-ignore
-          // Faulty TS library, fontSize exists.
-          object.set({ fontSize: size });
-        }
-      });
-      stage.renderAll();
-    }
-
-    setFontSize(size);
+    changeTextAttributes({ fontSize: size });
   };
 
   const duplicate = () => {
@@ -160,6 +100,8 @@ const Toolbar: React.FC = () => {
 
   useEffect(() => {
     if (!stage) return;
+
+    const selectionDependentTools = ['fill', 'stroke-color', 'font', 'stroke-width', 'opacity'];
 
     const onSelectionCleared = () => {
       if (selectionDependentTools.includes(activeTool)) {
@@ -232,7 +174,7 @@ const Toolbar: React.FC = () => {
 
             <Hint label="Bold" side="bottom" sideOffset={5}>
               <Button
-                className={cn('px-2 w-auto text-sm', fontWeight >= 700 && 'bg-gray-100')}
+                className={cn('px-2 w-auto text-sm', Number(textAttributes.fontWeight) >= 700 && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
                 onClick={toggleBold}
@@ -243,7 +185,7 @@ const Toolbar: React.FC = () => {
 
             <Hint label="Italic" side="bottom" sideOffset={5}>
               <Button
-                className={cn('px-2 w-auto text-sm', fontStyle === 'italic' && 'bg-gray-100')}
+                className={cn('px-2 w-auto text-sm', textAttributes.fontStyle === 'italic' && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
                 onClick={toggleItalic}
@@ -254,7 +196,7 @@ const Toolbar: React.FC = () => {
 
             <Hint label="Underline" side="bottom" sideOffset={5}>
               <Button
-                className={cn('px-2 w-auto text-sm', underline && 'bg-gray-100')}
+                className={cn('px-2 w-auto text-sm', textAttributes.underline && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
                 onClick={toggleUnderline}
@@ -265,7 +207,7 @@ const Toolbar: React.FC = () => {
 
             <Hint label="Strike" side="bottom" sideOffset={5}>
               <Button
-                className={cn('px-2 w-auto text-sm', strikethrough && 'bg-gray-100')}
+                className={cn('px-2 w-auto text-sm', textAttributes.linethrough && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
                 onClick={toggleStrikethrough}
@@ -276,7 +218,7 @@ const Toolbar: React.FC = () => {
 
             <Hint label="Align Left" side="bottom" sideOffset={5}>
               <Button
-                className={cn('px-2 w-auto text-sm', textAlign === 'left' && 'bg-gray-100')}
+                className={cn('px-2 w-auto text-sm', textAttributes.textAlign === 'left' && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
                 onClick={() => changeTextAlign('left')}
@@ -287,7 +229,7 @@ const Toolbar: React.FC = () => {
 
             <Hint label="Align Center" side="bottom" sideOffset={5}>
               <Button
-                className={cn('px-2 w-auto text-sm', textAlign === 'center' && 'bg-gray-100')}
+                className={cn('px-2 w-auto text-sm', textAttributes.textAlign === 'center' && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
                 onClick={() => changeTextAlign('center')}
@@ -298,7 +240,7 @@ const Toolbar: React.FC = () => {
 
             <Hint label="Align Right" side="bottom" sideOffset={5}>
               <Button
-                className={cn('px-2 w-auto text-sm', textAlign === 'right' && 'bg-gray-100')}
+                className={cn('px-2 w-auto text-sm', textAttributes.textAlign === 'right' && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
                 onClick={() => changeTextAlign('right')}
@@ -307,7 +249,7 @@ const Toolbar: React.FC = () => {
               </Button>
             </Hint>
 
-            <InputNumber value={fontSize} onChange={changeFontSize} />
+            <InputNumber value={textAttributes.fontSize} onChange={changeFontSize} />
           </>
         )}
 

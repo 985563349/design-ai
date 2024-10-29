@@ -31,10 +31,9 @@ const Sidebar: React.FC = () => {
   const changeActiveTool = (tool: typeof activeTool) => {
     if (tool === activeTool) {
       setActiveTool('select');
-      return;
+    } else {
+      setActiveTool(tool);
     }
-
-    setActiveTool(tool);
   };
 
   return (

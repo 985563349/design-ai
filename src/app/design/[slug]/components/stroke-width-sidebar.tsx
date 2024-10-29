@@ -15,22 +15,23 @@ const StrokeWidthSidebar: React.FC = () => {
   );
   const { stage, selectedObjects } = useEditorController();
 
-  const effectiveStrokeWidth = selectedObjects[0]?.get('strokeWidth') ?? strokeWidth;
-  const effectiveStrokeDashArray = selectedObjects[0]?.get('strokeDashArray') ?? strokeDashArray;
+  const selectObject = selectedObjects[0];
+  const effectiveStrokeWidth = selectObject?.get('strokeWidth') ?? strokeWidth;
+  const effectiveStrokeDashArray = selectObject?.get('strokeDashArray') ?? strokeDashArray;
 
   const changeStrokeWidth = (width: typeof strokeWidth) => {
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => object.set({ strokeWidth: width }));
-      stage.renderAll();
-    }
+    if (!stage) return;
+
+    stage.getActiveObjects().forEach((object) => object.set({ strokeWidth: width }));
+    stage.renderAll();
     setStrokeWidth(width);
   };
 
   const changeStrokeType = (type: typeof strokeDashArray) => {
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => object.set({ strokeDashArray: type }));
-      stage.renderAll();
-    }
+    if (!stage) return;
+
+    stage.getActiveObjects().forEach((object) => object.set({ strokeDashArray: type }));
+    stage.renderAll();
     setStrokeDashArray(type);
   };
 

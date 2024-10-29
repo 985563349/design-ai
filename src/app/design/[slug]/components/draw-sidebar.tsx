@@ -15,8 +15,9 @@ const DrawSidebar: React.FC = () => {
   );
   const { stage, selectedObjects } = useEditorController();
 
-  const effectiveStrokeWidth = selectedObjects[0]?.get('strokeWidth') ?? strokeWidth;
-  const effectiveStrokeColor = selectedObjects[0]?.get('stroke') ?? strokeColor;
+  const selectedObject = selectedObjects[0];
+  const effectiveStrokeWidth = selectedObject?.get('strokeWidth') ?? strokeWidth;
+  const effectiveStrokeColor = selectedObject?.get('stroke') ?? strokeColor;
 
   const changeStrokeWidth = (width: typeof strokeWidth) => {
     if (!stage) return;

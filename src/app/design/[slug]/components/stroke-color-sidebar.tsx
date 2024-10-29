@@ -13,10 +13,10 @@ const StrokeColorSidebar: React.FC = () => {
   const effectiveStrokeColor = selectedObjects[0]?.get('stroke') ?? strokeColor;
 
   const changeStrokeColor = (color: typeof strokeColor) => {
-    if (stage) {
-      stage.getActiveObjects().forEach((object) => object.set({ stroke: color }));
-      stage.renderAll();
-    }
+    if (!stage) return;
+
+    stage.getActiveObjects().forEach((object) => object.set({ stroke: color }));
+    stage.renderAll();
     setStrokeColor(color);
   };
 
