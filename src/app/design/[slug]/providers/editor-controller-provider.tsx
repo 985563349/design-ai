@@ -4,6 +4,11 @@ import { fabric } from 'fabric';
 export type EditorControllerApi = {
   stage?: fabric.Canvas;
   selectedObjects: fabric.Object[];
+  canUndo: boolean;
+  canRedo: boolean;
+  save: (skip?: boolean) => void;
+  undo: () => void;
+  redo: () => void;
   getWorkspace: () => fabric.Object | void;
   add: (object: fabric.Object) => void;
   remove: () => void;
@@ -26,8 +31,67 @@ export interface EditorControllerProps {
 }
 
 export const EditorControllerProvider: React.FC<EditorControllerProps> = ({ stage, children }) => {
+  const history = useRef<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const skipRef = useRef(false);
+
   const [selectedObjects, setSelectedObjects] = useState<fabric.Object[]>([]);
   const clipboard = useRef<any>(null);
+
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex < history.current.length - 1;
+
+  const save = (skip?: boolean) => {
+    if (!stage) return;
+
+    const currentState = stage.toJSON([
+      'name',
+      'gradientAngle',
+      'selectable',
+      'hasControls',
+      'linkData',
+      'editable',
+      'extensionType',
+      'extension',
+    ]);
+    const json = JSON.stringify(currentState);
+
+    if (!skip && !skipRef.current) {
+      setHistoryIndex(history.current.push(json) - 1);
+    }
+  };
+
+  const undo = () => {
+    if (!stage || !canUndo) return;
+
+    skipRef.current = true;
+    stage.clear().renderAll();
+
+    const previousIndex = historyIndex - 1;
+    const previousState = JSON.parse(history.current[previousIndex]);
+
+    stage.loadFromJSON(previousState, () => {
+      stage.renderAll();
+      setHistoryIndex(previousIndex);
+      skipRef.current = false;
+    });
+  };
+
+  const redo = () => {
+    if (!stage || !canRedo) return;
+
+    skipRef.current = true;
+    stage.clear().renderAll();
+
+    const nextIndex = historyIndex + 1;
+    const nextState = JSON.parse(history.current[nextIndex]);
+
+    stage.loadFromJSON(nextState, () => {
+      stage.renderAll();
+      setHistoryIndex(nextIndex);
+      skipRef.current = false;
+    });
+  };
 
   const getWorkspace = () => {
     if (!stage) return;
@@ -151,6 +215,29 @@ export const EditorControllerProvider: React.FC<EditorControllerProps> = ({ stag
     stage.fire('resize');
   };
 
+  const saveRef = useRef(save);
+  saveRef.current = save;
+
+  useEffect(() => {
+    if (!stage) return;
+
+    // initialize history store
+    history.current = [];
+    saveRef.current();
+
+    const onChanged = () => saveRef.current();
+
+    stage.on('object:added', onChanged);
+    stage.on('object:removed', onChanged);
+    stage.on('object:modified', onChanged);
+
+    return () => {
+      stage.off('object:added', onChanged);
+      stage.off('object:removed', onChanged);
+      stage.off('object:modified', onChanged);
+    };
+  }, [stage]);
+
   useEffect(() => {
     if (!stage) return;
 
@@ -174,6 +261,11 @@ export const EditorControllerProvider: React.FC<EditorControllerProps> = ({ stag
       value={{
         stage,
         selectedObjects,
+        canUndo,
+        canRedo,
+        save,
+        undo,
+        redo,
         getWorkspace,
         add,
         remove,

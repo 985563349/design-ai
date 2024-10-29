@@ -5,18 +5,15 @@ import { BsCloudCheck } from 'react-icons/bs';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import Hint from '@/components/hint';
 import { useEditorStore } from '../providers/editor-store-provider';
+import { useEditorController } from '../providers/editor-controller-provider';
 
 const Navbar: React.FC = () => {
   const { activeTool, setActiveTool } = useEditorStore((state) => state);
+  const { canUndo, canRedo, undo, redo } = useEditorController();
 
   return (
     <nav className="flex items-center border-b px-4 h-14 bg-white">
@@ -58,13 +55,13 @@ const Navbar: React.FC = () => {
         </Hint>
 
         <Hint label="Undo" sideOffset={10}>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" disabled={!canUndo} onClick={undo}>
             <Undo2 />
           </Button>
         </Hint>
 
         <Hint label="Redo" sideOffset={10}>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" disabled={!canRedo} onClick={redo}>
             <Redo2 />
           </Button>
         </Hint>
