@@ -8,18 +8,20 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import Hint from '@/components/hint';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
 import UserDropdown from '@/components/user-dropdown';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorHistory } from '../providers/editor-history';
 
 const Navbar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditorStore((state) => state);
-  const { canUndo, canRedo, undo, redo } = useEditorController();
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+
+  const { canUndo, canRedo, undo, redo } = useEditorHistory();
 
   return (
     <nav className="flex items-center border-b px-4 h-14 bg-white">
       <div className="mr-4">
-        <Link href="/">Logo</Link>
+        <Link href="/">Design AI</Link>
       </div>
 
       <div className="flex items-center py-4 h-full">

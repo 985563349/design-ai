@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlignCenter,
   AlignLeft,
@@ -24,14 +24,18 @@ import { Button } from '@/components/ui/button';
 import Hint from '@/components/hint';
 import InputNumber from '@/components/input-number';
 import useDerivedState from '@/hooks/use-derived-state';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
+import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const Toolbar: React.FC = () => {
-  const { activeTool, fontFamily, setActiveTool } = useEditorStore((state) => state);
-  const { stage, selectedObjects, copy, paste, bringForward, sendBackwards, remove } = useEditorController();
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+  const fontFamily = useEditorStore((state) => state.fontFamily);
 
-  const selectedObject = selectedObjects[0];
+  const { stage, copy, paste, bringForward, sendBackwards, remove } = useEditorController();
+
+  const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const isSelectedText = selectedObject?.type === 'text';
   const isSelectedImage = selectedObject?.type === 'image';
 
@@ -98,6 +102,8 @@ const Toolbar: React.FC = () => {
     paste();
   };
 
+  useOnSelectionChange((objects) => setSelectedObject(objects[0]));
+
   useEffect(() => {
     if (!stage) return;
 
@@ -118,7 +124,7 @@ const Toolbar: React.FC = () => {
 
   return (
     <div className="border-b h-14 bg-white">
-      <div className={cn('flex items-center gap-2 px-4 h-full', !selectedObjects.length && 'hidden')}>
+      <div className={cn('flex items-center gap-2 px-4 h-full', !selectedObject && 'hidden')}>
         {!isSelectedImage && (
           <Hint label="Color" side="bottom" sideOffset={5}>
             <Button
@@ -296,7 +302,7 @@ const Toolbar: React.FC = () => {
         </Hint>
 
         <Hint label="Delete" side="bottom" sideOffset={5}>
-          <Button variant="ghost" size="icon" onClick={remove}>
+          <Button variant="ghost" size="icon" onClick={() => remove()}>
             <Trash />
           </Button>
         </Hint>

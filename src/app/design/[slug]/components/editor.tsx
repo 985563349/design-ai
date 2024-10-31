@@ -19,8 +19,9 @@ import StrokeWidthSidebar from './stroke-width-sidebar';
 import FilterSidebar from './filter-sidebar';
 import OpacitySidebar from './opacity-sidebar';
 
-import { EditorStoreProvider } from '../providers/editor-store-provider';
-import { EditorControllerProvider } from '../providers/editor-controller-provider';
+import { EditorStoreProvider } from '../providers/editor-store';
+import { EditorControllerProvider } from '../providers/editor-controller';
+import { EditorHistoryProvider } from '../providers/editor-history';
 
 const Editor: React.FC = () => {
   const [stage, setStage] = useState<fabric.Canvas>();
@@ -28,30 +29,32 @@ const Editor: React.FC = () => {
   return (
     <EditorStoreProvider>
       <EditorControllerProvider stage={stage}>
-        <div className="flex flex-col h-full">
-          <Navbar />
-          <div className="flex-1 flex overflow-hidden">
-            <Sidebar />
-            <ImageSidebar />
-            <TextSidebar />
-            <ShapeSidebar />
-            <DrawSidebar />
-            <SettingsSidebar />
-            <FillColorSidebar />
-            <StrokeColorSidebar />
-            <FontSidebar />
-            <StrokeWidthSidebar />
-            <FilterSidebar />
-            <OpacitySidebar />
-            <main className="flex-1 flex flex-col overflow-hidden">
-              <Toolbar />
-              <div className="flex-1 overflow-hidden bg-slate-100">
-                <Stage onInit={setStage} />
-              </div>
-              <Footer />
-            </main>
+        <EditorHistoryProvider stage={stage}>
+          <div className="flex flex-col h-full">
+            <Navbar />
+            <div className="flex-1 flex overflow-hidden">
+              <Sidebar />
+              <ImageSidebar />
+              <TextSidebar />
+              <ShapeSidebar />
+              <DrawSidebar />
+              <SettingsSidebar />
+              <FillColorSidebar />
+              <StrokeColorSidebar />
+              <FontSidebar />
+              <StrokeWidthSidebar />
+              <FilterSidebar />
+              <OpacitySidebar />
+              <main className="flex-1 flex flex-col overflow-hidden">
+                <Toolbar />
+                <div className="flex-1 overflow-hidden bg-slate-100">
+                  <Stage onInit={setStage} />
+                </div>
+                <Footer />
+              </main>
+            </div>
           </div>
-        </div>
+        </EditorHistoryProvider>
       </EditorControllerProvider>
     </EditorStoreProvider>
   );

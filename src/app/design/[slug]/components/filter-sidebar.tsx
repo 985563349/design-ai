@@ -3,9 +3,9 @@
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
-import { createFilter } from '../helpers/graphics';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
+import { createFilter } from '../lib/helpers';
 
 const filters = [
   'none',
@@ -34,7 +34,9 @@ const filters = [
 ];
 
 const FilterSidebar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditorStore((state) => state);
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+
   const { stage } = useEditorController();
 
   const changeFilter = (filter: string) => {

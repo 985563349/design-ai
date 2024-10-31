@@ -3,12 +3,15 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import Drawer from '@/components/drawer';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
-import { createText } from '../helpers/graphics';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
+import { createText } from '../lib/helpers';
 
 const TextSidebar: React.FC = () => {
-  const { activeTool, fillColor, setActiveTool } = useEditorStore((state) => state);
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+  const fillColor = useEditorStore((state) => state.fillColor);
+
   const { add } = useEditorController();
 
   const addTextbox = () => {

@@ -1,17 +1,23 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Slider } from '@/components/ui/slider';
 import Drawer from '@/components/drawer';
 import useDerivedState from '@/hooks/use-derived-state';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
+import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const OpacitySidebar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditorStore((state) => state);
-  const { stage, selectedObjects } = useEditorController();
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
-  const [opacity, setOpacity] = useDerivedState(() => selectedObjects[0]?.get('opacity') ?? 1, [selectedObjects]);
+  const { stage } = useEditorController();
+
+  const [selectedObject, setSelectedObject] = useState<fabric.Object>();
+  const [opacity, setOpacity] = useDerivedState(() => selectedObject?.get('opacity') ?? 1, [selectedObject]);
 
   const changeOpacity = (opacity: number) => {
     if (!stage) return;
@@ -20,6 +26,8 @@ const OpacitySidebar: React.FC = () => {
     stage.renderAll();
     setOpacity(opacity);
   };
+
+  useOnSelectionChange((objects) => setSelectedObject(objects[0]));
 
   return (
     <Drawer

@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button';
 import Drawer from '@/components/drawer';
 import ColorPicker from '@/components/color-picker';
 import useDerivedState from '@/hooks/use-derived-state';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
 
 const SettingsSidebar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditorStore((state) => state);
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+
   const { getWorkspace, setWorkspaceBackground, setWorkspaceSize } = useEditorController();
 
   const workspace = getWorkspace();

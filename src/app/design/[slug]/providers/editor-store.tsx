@@ -1,3 +1,7 @@
+'use client';
+
+import { createContext, useContext, useRef } from 'react';
+import { useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
 
 type ActiveTool =
@@ -16,7 +20,7 @@ type ActiveTool =
   | 'font'
   | 'filter';
 
-export type EditorState = {
+type EditorState = {
   activeTool: ActiveTool;
   fillColor: string;
   strokeColor: string;
@@ -25,7 +29,7 @@ export type EditorState = {
   fontFamily: string;
 };
 
-export type EditorActions = {
+type EditorActions = {
   setActiveTool: (activeTool: ActiveTool) => void;
   setFillColor: (fillColor: string) => void;
   setStrokeColor: (strokeColor: string) => void;
@@ -34,9 +38,9 @@ export type EditorActions = {
   setFontFamily: (fontFamily: string) => void;
 };
 
-export type EditorStore = EditorState & EditorActions;
+type EditorStore = EditorState & EditorActions;
 
-export const defaultInitState: EditorState = {
+const defaultInitState: EditorState = {
   activeTool: 'select',
   fillColor: 'rgba(0, 0, 0, 1)',
   strokeColor: 'rgba(0, 0, 0, 1)',
@@ -45,7 +49,7 @@ export const defaultInitState: EditorState = {
   fontFamily: 'Arial',
 };
 
-export const createEditorStore = (initState: EditorState = defaultInitState) => {
+const createEditorStore = (initState: EditorState = defaultInitState) => {
   return createStore<EditorStore>()((set) => ({
     ...initState,
     setActiveTool: (activeTool) => set({ activeTool }),
@@ -56,3 +60,31 @@ export const createEditorStore = (initState: EditorState = defaultInitState) => 
     setFontFamily: (fontFamily) => set({ fontFamily }),
   }));
 };
+
+export type EditorStoreApi = ReturnType<typeof createEditorStore>;
+
+export const EditorStoreContext = createContext<EditorStoreApi | null>(null);
+
+export interface EditorStoreProviderProps {
+  children: React.ReactNode;
+}
+
+export const EditorStoreProvider: React.FC<EditorStoreProviderProps> = ({ children }) => {
+  const storeRef = useRef<EditorStoreApi>();
+
+  if (!storeRef.current) {
+    storeRef.current = createEditorStore();
+  }
+
+  return <EditorStoreContext.Provider value={storeRef.current}>{children}</EditorStoreContext.Provider>;
+};
+
+export function useEditorStore<T>(selector: (state: EditorStore) => T) {
+  const context = useContext(EditorStoreContext);
+
+  if (!context) {
+    throw new Error('useEditorStore must be used within EditorStoreProvider');
+  }
+
+  return useStore(context, selector);
+}

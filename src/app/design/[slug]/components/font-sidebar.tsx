@@ -1,11 +1,14 @@
 'use client';
 
+import { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import Drawer from '@/components/drawer';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
+import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const fonts = [
   'Arial',
@@ -29,11 +32,16 @@ const fonts = [
 ];
 
 const FontSidebar: React.FC = () => {
-  const { activeTool, fontFamily, setActiveTool, setFontFamily } = useEditorStore((state) => state);
-  const { stage, selectedObjects } = useEditorController();
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+  const fontFamily = useEditorStore((state) => state.fontFamily);
+  const setFontFamily = useEditorStore((state) => state.setFontFamily);
 
+  const { stage } = useEditorController();
+
+  const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   // @ts-ignore
-  const effectiveFontFamily = selectedObjects[0]?.get('fontFamily') ?? fontFamily;
+  const effectiveFontFamily = selectedObject?.get('fontFamily') ?? fontFamily;
 
   const changeFontFamily = (font: typeof fontFamily) => {
     if (stage) {
@@ -47,6 +55,8 @@ const FontSidebar: React.FC = () => {
     }
     setFontFamily(font);
   };
+
+  useOnSelectionChange((objects) => setSelectedObject(objects[0]));
 
   return (
     <Drawer

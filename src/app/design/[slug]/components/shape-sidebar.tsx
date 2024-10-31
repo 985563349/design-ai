@@ -6,9 +6,9 @@ import type { IconType } from 'react-icons';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
-import { createCircle, createRectangle, createTriangle } from '../helpers/graphics';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
+import { createCircle, createRectangle, createTriangle } from '../lib/helpers';
 
 const ShapeTool: React.FC<{
   icon: LucideIcon | IconType;
@@ -22,7 +22,13 @@ const ShapeTool: React.FC<{
 };
 
 const ShapeSidebar: React.FC = () => {
-  const { activeTool, fillColor, strokeColor, strokeWidth, strokeDashArray, setActiveTool } = useEditorStore((state) => state);
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+  const fillColor = useEditorStore((state) => state.fillColor);
+  const strokeColor = useEditorStore((state) => state.strokeColor);
+  const strokeWidth = useEditorStore((state) => state.strokeWidth);
+  const strokeDashArray = useEditorStore((state) => state.strokeDashArray);
+
   const { add } = useEditorController();
 
   const addCircle = () => {

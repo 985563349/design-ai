@@ -1,17 +1,17 @@
 import { useEffect, useRef } from 'react';
 
-export default function useConditionReaction(truthy: () => void, falsy: () => void, condition: boolean) {
-  const truthyRef = useRef(truthy);
-  truthyRef.current = truthy;
+export default function useConditionReaction(onTrue: () => void, onFalse: () => void, condition: boolean) {
+  const onTrueRef = useRef(onTrue);
+  onTrueRef.current = onTrue;
 
-  const falsyRef = useRef(falsy);
-  falsyRef.current = falsy;
+  const onFalseRef = useRef(onFalse);
+  onFalseRef.current = onFalse;
 
   useEffect(() => {
     if (condition) {
-      truthyRef.current();
+      onTrueRef.current();
     } else {
-      falsyRef.current();
+      onFalseRef.current();
     }
   }, [condition]);
 }

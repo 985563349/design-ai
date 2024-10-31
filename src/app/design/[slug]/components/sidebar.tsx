@@ -5,7 +5,7 @@ import type { LucideIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useEditorStore } from '../providers/editor-store-provider';
+import { useEditorStore } from '../providers/editor-store';
 
 const SidebarItem: React.FC<{
   label: string;
@@ -26,7 +26,8 @@ const SidebarItem: React.FC<{
 };
 
 const Sidebar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditorStore((state) => state);
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
   const changeActiveTool = (tool: typeof activeTool) => {
     if (tool === activeTool) {

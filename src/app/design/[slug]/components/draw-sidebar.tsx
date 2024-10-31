@@ -1,46 +1,47 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import Drawer from '@/components/drawer';
 import ColorPicker from '@/components/color-picker';
 import useConditionReaction from '@/hooks/use-condition-reaction';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
 
 const DrawSidebar: React.FC = () => {
-  const { activeTool, strokeColor, strokeWidth, setActiveTool, setStrokeColor, setStrokeWidth } = useEditorStore(
-    (state) => state
-  );
-  const { stage, selectedObjects } = useEditorController();
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
-  const selectedObject = selectedObjects[0];
-  const effectiveStrokeWidth = selectedObject?.get('strokeWidth') ?? strokeWidth;
-  const effectiveStrokeColor = selectedObject?.get('stroke') ?? strokeColor;
+  const { stage } = useEditorController();
 
-  const changeStrokeWidth = (width: typeof strokeWidth) => {
+  const [brushWidth, setBrushWidth] = useState(2);
+  const [brushColor, setBrushColor] = useState('rgba(0, 0, 0, 1)');
+
+  const changeBrushWidth = (width: typeof brushWidth) => {
     if (!stage) return;
 
     stage.freeDrawingBrush.width = width;
     stage.renderAll();
-    setStrokeWidth(width);
+    setBrushWidth(width);
   };
 
-  const changeStrokeColor = (color: typeof strokeColor) => {
+  const changeBrushColor = (color: typeof brushColor) => {
     if (!stage) return;
 
     stage.freeDrawingBrush.color = color;
     stage.renderAll();
-    setStrokeColor(color);
+    setBrushColor(color);
   };
 
   const enabledDrawingMode = () => {
     if (!stage) return;
 
     stage.isDrawingMode = true;
-    stage.freeDrawingBrush.color = strokeColor;
-    stage.freeDrawingBrush.width = strokeWidth;
+    stage.freeDrawingBrush.width = brushWidth;
+    stage.freeDrawingBrush.color = brushColor;
     stage.discardActiveObject();
     stage.renderAll();
   };
@@ -64,10 +65,10 @@ const DrawSidebar: React.FC = () => {
         <div className="p-4 space-y-8">
           <div className="space-y-4">
             <Label>Brush width</Label>
-            <Slider value={[effectiveStrokeWidth]} onValueChange={(value) => changeStrokeWidth(value[0])} />
+            <Slider value={[brushWidth]} onValueChange={(value) => changeBrushWidth(value[0])} />
           </div>
 
-          <ColorPicker value={effectiveStrokeColor} onChange={changeStrokeColor} />
+          <ColorPicker value={brushColor} onChange={changeBrushColor} />
         </div>
       </ScrollArea>
     </Drawer>

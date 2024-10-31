@@ -1,8 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import * as material from 'material-colors';
 import type { RGBColor } from 'react-color';
+import * as material from 'material-colors';
 
 const ChromePicker = dynamic(() => import('react-color').then((mod) => ({ default: mod.ChromePicker })), { ssr: false });
 const CirclePicker = dynamic(() => import('react-color').then((mod) => ({ default: mod.CirclePicker })), { ssr: false });

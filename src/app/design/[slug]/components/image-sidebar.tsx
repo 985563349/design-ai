@@ -9,11 +9,13 @@ import { AlertTriangle, Loader } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
 import { client } from '@/lib/hono';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
 
 const ImageSidebar: React.FC = () => {
-  const { activeTool, setActiveTool } = useEditorStore((state) => state);
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+
   const { stage, getWorkspace, add } = useEditorController();
 
   const { data, isLoading, isError } = useQuery({

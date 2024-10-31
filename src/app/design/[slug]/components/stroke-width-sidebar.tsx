@@ -1,23 +1,30 @@
 'use client';
 
+import { useState } from 'react';
+
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import Drawer from '@/components/drawer';
-import { useEditorStore } from '../providers/editor-store-provider';
-import { useEditorController } from '../providers/editor-controller-provider';
+import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
+import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const StrokeWidthSidebar: React.FC = () => {
-  const { activeTool, strokeWidth, strokeDashArray, setActiveTool, setStrokeWidth, setStrokeDashArray } = useEditorStore(
-    (state) => state
-  );
-  const { stage, selectedObjects } = useEditorController();
+  const activeTool = useEditorStore((state) => state.activeTool);
+  const setActiveTool = useEditorStore((state) => state.setActiveTool);
+  const strokeWidth = useEditorStore((state) => state.strokeWidth);
+  const setStrokeWidth = useEditorStore((state) => state.setStrokeWidth);
+  const strokeDashArray = useEditorStore((state) => state.strokeDashArray);
+  const setStrokeDashArray = useEditorStore((state) => state.setStrokeDashArray);
 
-  const selectObject = selectedObjects[0];
-  const effectiveStrokeWidth = selectObject?.get('strokeWidth') ?? strokeWidth;
-  const effectiveStrokeDashArray = selectObject?.get('strokeDashArray') ?? strokeDashArray;
+  const { stage } = useEditorController();
+
+  const [selectedObject, setSelectedObjects] = useState<fabric.Object>();
+  const effectiveStrokeWidth = selectedObject?.get('strokeWidth') ?? strokeWidth;
+  const effectiveStrokeDashArray = selectedObject?.get('strokeDashArray') ?? strokeDashArray;
 
   const changeStrokeWidth = (width: typeof strokeWidth) => {
     if (!stage) return;
@@ -34,6 +41,8 @@ const StrokeWidthSidebar: React.FC = () => {
     stage.renderAll();
     setStrokeDashArray(type);
   };
+
+  useOnSelectionChange((objects) => setSelectedObjects(objects[0]));
 
   return (
     <Drawer

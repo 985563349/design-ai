@@ -2,7 +2,7 @@ import { Minimize, ZoomIn, ZoomOut } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import Hint from '@/components/hint';
-import { useEditorController } from '../providers/editor-controller-provider';
+import { useEditorController } from '../providers/editor-controller';
 
 const Footer: React.FC = () => {
   const { zoomIn, zoomOut, zoomReset } = useEditorController();
