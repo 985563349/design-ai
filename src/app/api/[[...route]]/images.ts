@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { verifyAuth } from '@hono/auth-js';
 import { createApi } from 'unsplash-js';
 
 const unsplash = createApi({
@@ -6,7 +7,7 @@ const unsplash = createApi({
   fetch,
 });
 
-const app = new Hono().get('/', async (c) => {
+const app = new Hono().get('/', verifyAuth(), async (c) => {
   const images = await unsplash.photos.getRandom({
     collectionIds: ['20210505'],
     count: 50,

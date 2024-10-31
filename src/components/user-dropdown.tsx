@@ -23,9 +23,9 @@ const UserDropdown: React.FC = () => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger>
-        <Avatar className="size-10 hover:opacity-75 transition">
+        <Avatar className="size-10 hover:opacity-75 transition bg-white">
           <AvatarImage src={avatar} alt={name} />
-          <AvatarFallback className="flex items-center justify-center font-medium text-white bg-blue-500">
+          <AvatarFallback className="flex items-center justify-center font-medium text-blue-400 bg-white">
             {name.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
@@ -34,7 +34,7 @@ const UserDropdown: React.FC = () => {
       <DropdownMenuContent className="w-60" align="end">
         <DropdownMenuItem className="h-10" onClick={() => signOut()}>
           <LogOut />
-          Log out
+          退出登录
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

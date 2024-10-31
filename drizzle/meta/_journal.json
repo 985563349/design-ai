@@ -15,6 +15,13 @@
       "when": 1730277668627,
       "tag": "0001_giant_proteus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1730356551372,
+      "tag": "0002_open_lady_bullseye",
+      "breakpoints": true
     }
   ]
 }

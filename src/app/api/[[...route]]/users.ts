@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
-import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
+import bcrypt from 'bcryptjs';
+import { z } from 'zod';
 
 import { db } from '@/db/drizzle';
 import { users } from '@/db/schema';
@@ -19,12 +19,9 @@ const app = new Hono().post(
   ),
   async (c) => {
     const { name, email, password } = c.req.valid('json');
+    const result = await db.select().from(users).where(eq(users.email, email));
 
-    const query = await db.select().from(users).where(eq(users.email, email));
-
-    console.log(query);
-
-    if (query.length) {
+    if (result.length) {
       return c.json({ error: 'Email already in use' }, 400);
     }
 
