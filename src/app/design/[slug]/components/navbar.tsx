@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import Hint from '@/components/hint';
 import { useEditorStore } from '../providers/editor-store-provider';
 import { useEditorController } from '../providers/editor-controller-provider';
+import UserDropdown from '@/components/user-dropdown';
 
 const Navbar: React.FC = () => {
   const { activeTool, setActiveTool } = useEditorStore((state) => state);
@@ -74,7 +75,7 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      <div className="ml-auto flex items-center">
+      <div className="ml-auto flex items-center gap-x-2">
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button size="sm" variant="ghost">
@@ -117,6 +118,8 @@ const Navbar: React.FC = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <UserDropdown />
       </div>
     </nav>
   );
