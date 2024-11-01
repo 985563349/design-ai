@@ -1,7 +1,7 @@
 import Link from 'next/link';
+import { useFilePicker } from 'use-file-picker';
 import { ChevronDown, MousePointerClick, Undo2, Redo2, Download } from 'lucide-react';
-import { CiFileOn } from 'react-icons/ci';
-import { BsCloudCheck } from 'react-icons/bs';
+import { BsCloudCheck, BsFiletypeJpg, BsFiletypeJson, BsFiletypePng, BsFiletypeSvg } from 'react-icons/bs';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -10,13 +10,46 @@ import { Separator } from '@/components/ui/separator';
 import Hint from '@/components/hint';
 import UserDropdown from '@/components/user-dropdown';
 import { useEditorStore } from '../providers/editor-store';
+import { useEditorController } from '../providers/editor-controller';
 import { useEditorHistory } from '../providers/editor-history';
+import { downloadFile } from '../lib/utils';
 
 const Navbar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
-  const { canUndo, canRedo, undo, redo } = useEditorHistory();
+  const { loadFromJSON, exportImage, exportJSON } = useEditorController();
+  const { canUndo, canRedo, save, undo, redo, clear, pause, resume } = useEditorHistory();
+
+  const { openFilePicker } = useFilePicker({
+    accept: '.json',
+    onFilesSuccessfullySelected: (data: any) => {
+      const { plainFiles } = data;
+      const file = plainFiles?.[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.readAsText(file, 'UTF-8');
+      reader.onload = () => {
+        pause();
+        clear();
+        loadFromJSON(reader.result as string, () => {
+          resume();
+          save();
+        });
+      };
+    },
+  });
+
+  const exportFile = (type: string) => () => {
+    const content = type === 'json' ? exportJSON() : exportImage();
+
+    if (!content) return;
+
+    downloadFile(content, type);
+  };
 
   return (
     <nav className="flex items-center border-b px-4 h-14 bg-white">
@@ -34,8 +67,8 @@ const Navbar: React.FC = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="start" className="min-w-60">
-            <DropdownMenuItem className="flex items-center gap-x-2">
-              <CiFileOn className="!size-8" />
+            <DropdownMenuItem className="flex items-center gap-x-2" onClick={openFilePicker}>
+              <BsFiletypeJson className="!size-7" />
               <div>
                 <p>Open</p>
                 <p className="text-xs text-muted-foreground">Open a JSON file</p>
@@ -87,32 +120,32 @@ const Navbar: React.FC = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="min-w-60">
-            <DropdownMenuItem className="flex items-center gap-x-2">
-              <CiFileOn className="!size-8" />
+            <DropdownMenuItem className="flex items-center gap-x-2" onClick={exportFile('json')}>
+              <BsFiletypeJson className="!size-7" />
               <div>
                 <p>JSON</p>
                 <p className="text-xs text-muted-foreground">Save for later editing</p>
               </div>
             </DropdownMenuItem>
 
-            <DropdownMenuItem className="flex items-center gap-x-2">
-              <CiFileOn className="!size-8" />
+            <DropdownMenuItem className="flex items-center gap-x-2" onClick={exportFile('png')}>
+              <BsFiletypePng className="!size-7" />
               <div>
                 <p>PNG</p>
                 <p className="text-xs text-muted-foreground">Best for sharing on the web</p>
               </div>
             </DropdownMenuItem>
 
-            <DropdownMenuItem className="flex items-center gap-x-2">
-              <CiFileOn className="!size-8" />
+            <DropdownMenuItem className="flex items-center gap-x-2" onClick={exportFile('jpg')}>
+              <BsFiletypeJpg className="!size-7" />
               <div>
                 <p>JPG</p>
                 <p className="text-xs text-muted-foreground">Best for printing</p>
               </div>
             </DropdownMenuItem>
 
-            <DropdownMenuItem className="flex items-center gap-x-2">
-              <CiFileOn className="!size-8" />
+            <DropdownMenuItem className="flex items-center gap-x-2" onClick={exportFile('svg')}>
+              <BsFiletypeSvg className="!size-7" />
               <div>
                 <p>SVG</p>
                 <p className="text-xs text-muted-foreground">Best for editing in vector software</p>

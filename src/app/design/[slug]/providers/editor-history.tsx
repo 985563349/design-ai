@@ -6,6 +6,9 @@ export type EditorHistoryApi = {
   save: (skip?: boolean) => void;
   undo: () => void;
   redo: () => void;
+  clear: () => void;
+  pause: () => void;
+  resume: () => void;
 };
 
 export const EditorHistoryContext = createContext<EditorHistoryApi | null>(null);
@@ -47,7 +50,7 @@ export const EditorHistoryProvider: React.FC<EditorHistoryProviderProps> = ({ st
     if (!stage || !canUndo) return;
 
     skipRef.current = true;
-    stage.clear().renderAll();
+    stage.clear();
 
     const previousIndex = index - 1;
     const previousState = JSON.parse(history.current[previousIndex]);
@@ -63,7 +66,7 @@ export const EditorHistoryProvider: React.FC<EditorHistoryProviderProps> = ({ st
     if (!stage || !canRedo) return;
 
     skipRef.current = true;
-    stage.clear().renderAll();
+    stage.clear();
 
     const nextIndex = index + 1;
     const nextState = JSON.parse(history.current[nextIndex]);
@@ -73,6 +76,19 @@ export const EditorHistoryProvider: React.FC<EditorHistoryProviderProps> = ({ st
       setIndex(nextIndex);
       skipRef.current = false;
     });
+  };
+
+  const clear = () => {
+    history.current = history.current.slice(0, 1);
+    setIndex(history.current.length - 1);
+  };
+
+  const pause = () => {
+    skipRef.current = true;
+  };
+
+  const resume = () => {
+    skipRef.current = false;
   };
 
   const saveRef = useRef(save);
@@ -106,6 +122,9 @@ export const EditorHistoryProvider: React.FC<EditorHistoryProviderProps> = ({ st
         canRedo,
         undo,
         redo,
+        clear,
+        pause,
+        resume,
       }}
     >
       {children}

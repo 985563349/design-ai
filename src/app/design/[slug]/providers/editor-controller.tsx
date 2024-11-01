@@ -16,6 +16,9 @@ export type EditorControllerApi = {
   zoomReset: () => void;
   setWorkspaceBackground: (background: string) => void;
   setWorkspaceSize: (size: Record<'width' | 'height', number>) => void;
+  exportImage: () => string | void;
+  exportJSON: () => string | void;
+  loadFromJSON: (json: string, callback?: VoidFunction) => void;
 };
 
 export const EditorControllerContext = createContext<EditorControllerApi | null>(null);
@@ -162,6 +165,50 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
     stage.fire('resize');
   };
 
+  const exportImage = () => {
+    if (!stage) return;
+
+    const workspace = getWorkspace();
+
+    if (!workspace) return;
+
+    const { width, height, left, top } = workspace as fabric.Rect;
+    stage.setViewportTransform([1, 0, 0, 1, 0, 0]);
+
+    const url = stage.toDataURL({ width, height, left, top, format: 'png', quality: 1 });
+    stage.fire('resize');
+
+    return url;
+  };
+
+  const exportJSON = () => {
+    if (!stage) return;
+
+    const currentState = stage.toJSON([
+      'name',
+      'gradientAngle',
+      'selectable',
+      'hasControls',
+      'linkData',
+      'editable',
+      'extensionType',
+      'extension',
+    ]);
+
+    return `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(currentState, null, '\t'))}`;
+  };
+
+  const loadFromJSON = (json: string, callback?: VoidFunction) => {
+    if (!stage) return;
+
+    stage.clear();
+
+    stage.loadFromJSON(JSON.parse(json), () => {
+      stage.renderAll();
+      callback?.();
+    });
+  };
+
   return (
     <EditorControllerContext.Provider
       value={{
@@ -179,6 +226,9 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
         zoomReset,
         setWorkspaceBackground,
         setWorkspaceSize,
+        exportImage,
+        exportJSON,
+        loadFromJSON,
       }}
     >
       {children}
