@@ -5,9 +5,10 @@ export type EditorControllerApi = {
   stage?: fabric.Canvas;
   getWorkspace: () => fabric.Object | void;
   add: (object: fabric.Object) => void;
-  remove: (objects?: fabric.Object[]) => void;
+  remove: () => void;
   copy: () => void;
   paste: () => void;
+  selectAll: () => void;
   bringForward: () => void;
   sendBackwards: () => void;
   zoomIn: () => void;
@@ -47,11 +48,11 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
     stage.add(object);
   };
 
-  const remove = (objects?: fabric.Object[]) => {
+  const remove = () => {
     if (!stage) return;
 
-    objects ??= stage.getActiveObjects();
-    objects.forEach((object) => stage.remove(object));
+    stage.getActiveObjects().forEach((object) => stage.remove(object));
+    stage.discardActiveObject();
     stage.renderAll();
   };
 
@@ -83,6 +84,18 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
       stage.setActiveObject(cloned);
       stage.requestRenderAll();
     });
+  };
+
+  const selectAll = () => {
+    if (!stage) return;
+
+    const objects = stage.getObjects().filter((object) => object.selectable);
+
+    if (!objects.length) return;
+
+    stage.discardActiveObject();
+    stage.setActiveObject(new fabric.ActiveSelection(objects, { canvas: stage }));
+    stage.renderAll();
   };
 
   const bringForward = () => {
@@ -158,6 +171,7 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
         remove,
         copy,
         paste,
+        selectAll,
         bringForward,
         sendBackwards,
         zoomIn,

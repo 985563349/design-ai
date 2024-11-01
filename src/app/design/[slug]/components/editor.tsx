@@ -18,6 +18,7 @@ import FontSidebar from './font-sidebar';
 import StrokeWidthSidebar from './stroke-width-sidebar';
 import FilterSidebar from './filter-sidebar';
 import OpacitySidebar from './opacity-sidebar';
+import HotKeysListener from './hot-keys-listener';
 
 import { EditorStoreProvider } from '../providers/editor-store';
 import { EditorControllerProvider } from '../providers/editor-controller';
@@ -45,6 +46,7 @@ const Editor: React.FC = () => {
               <StrokeWidthSidebar />
               <FilterSidebar />
               <OpacitySidebar />
+              <HotKeysListener />
               <main className="flex-1 flex flex-col overflow-hidden">
                 <Toolbar />
                 <div className="flex-1 overflow-hidden bg-slate-100">

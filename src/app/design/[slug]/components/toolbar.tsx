@@ -302,7 +302,7 @@ const Toolbar: React.FC = () => {
         </Hint>
 
         <Hint label="Delete" side="bottom" sideOffset={5}>
-          <Button variant="ghost" size="icon" onClick={() => remove()}>
+          <Button variant="ghost" size="icon" onClick={remove}>
             <Trash />
           </Button>
         </Hint>
