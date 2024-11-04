@@ -40,10 +40,10 @@ const Banner: React.FC = () => {
       </div>
 
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-3xl font-semibold">利用图像 AI 实现您的创意</h1>
-        <p className="mb-2 text-sm">瞬间将灵感转化为设计。只需上传图片，剩下的就交给 AI 吧。</p>
+        <h1 className="text-3xl font-semibold">Visualize your ideas with Image AI</h1>
+        <p className="mb-2 text-sm">Turn inspiration into design in no time. Simply upload an image and let AI do the rest.</p>
         <Button onClick={onClick} className="w-40" variant="secondary">
-          开始创建
+          Start creating
           <ArrowRight />
         </Button>
       </div>

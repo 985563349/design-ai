@@ -7,6 +7,7 @@ import Sidebar from './sidebar';
 import Toolbar from './toolbar';
 import Stage from './stage';
 import Footer from './footer';
+import TemplateSidebar from './template-sidebar';
 import ImageSidebar from './image-sidebar';
 import TextSidebar from './text-sidebar';
 import ShapeSidebar from './shape-sidebar';
@@ -35,6 +36,7 @@ const Editor: React.FC = () => {
             <Navbar />
             <div className="flex-1 flex overflow-hidden">
               <Sidebar />
+              <TemplateSidebar />
               <ImageSidebar />
               <TextSidebar />
               <ShapeSidebar />

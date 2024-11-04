@@ -3,7 +3,12 @@
 import { useSession, signOut } from 'next-auth/react';
 import { Loader, LogOut } from 'lucide-react';
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const UserDropdown: React.FC = () => {
@@ -34,7 +39,7 @@ const UserDropdown: React.FC = () => {
       <DropdownMenuContent className="w-60" align="end">
         <DropdownMenuItem className="h-10" onClick={() => signOut()}>
           <LogOut />
-          退出登录
+          Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

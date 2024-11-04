@@ -34,11 +34,11 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside className="px-3 w-60 h-full">
-      <SidebarItem label="首页" icon={Home} href="/" isActive={pathname === '/'} />
+      <SidebarItem label="Home" icon={Home} href="/" isActive={pathname === '/'} />
 
       <Separator className="my-2" />
 
-      <SidebarItem label="帮助" icon={MessageCircleQuestion} href="mailto:jie985563349@outlook.com" />
+      <SidebarItem label="Get Help" icon={MessageCircleQuestion} href="mailto:jie985563349@outlook.com" />
     </aside>
   );
 };
