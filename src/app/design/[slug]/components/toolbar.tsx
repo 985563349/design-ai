@@ -48,12 +48,12 @@ const Toolbar: React.FC = () => {
     const textObject = selectedObject as fabric.Text;
 
     return {
-      fontWeight: textObject?.get('fontWeight') ?? 400,
-      fontStyle: textObject?.get('fontStyle'),
-      underline: textObject?.get('underline'),
-      linethrough: textObject?.get('linethrough'),
-      textAlign: textObject?.get('textAlign'),
-      fontSize: textObject?.get('fontSize') ?? 0,
+      fontWeight: textObject.get('fontWeight') ?? 400,
+      fontStyle: textObject.get('fontStyle'),
+      underline: textObject.get('underline'),
+      linethrough: textObject.get('linethrough'),
+      textAlign: textObject.get('textAlign'),
+      fontSize: textObject.get('fontSize') ?? 0,
     };
   }, [selectedObject]);
 

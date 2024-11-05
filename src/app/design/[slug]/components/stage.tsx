@@ -34,7 +34,7 @@ const Stage: React.FC<StageProps> = ({ onInit }) => {
       width: 900,
       height: 1200,
       name: 'workspace',
-      fill: 'white',
+      fill: '#ffffff',
       selectable: false,
       hasControls: false,
       shadow: new fabric.Shadow({

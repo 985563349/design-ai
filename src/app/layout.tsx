@@ -3,7 +3,9 @@ import localFont from 'next/font/local';
 import { SessionProvider } from 'next-auth/react';
 
 import { auth } from '@/auth';
+import { Toaster } from '@/components/ui/sonner';
 import Providers from './providers';
+
 import './globals.css';
 
 const geistSans = localFont({
@@ -19,7 +21,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: 'Design AI',
-  description: '利用图像 AI 实现您的创意',
+  description: 'visualize your ideas with image ai',
 };
 
 export default async function RootLayout({
@@ -35,6 +37,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <Providers>{children}</Providers>
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   );

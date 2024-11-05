@@ -1,3 +1,4 @@
+import { CredentialsSignin } from 'next-auth';
 import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
@@ -9,6 +10,13 @@ import bcrypt from 'bcryptjs';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { db } from '@/db/drizzle';
 import { users } from '@/db/schema';
+
+class CustomCredentialsError extends CredentialsSignin {
+  constructor(code: string) {
+    super();
+    this.code = code;
+  }
+}
 
 const CredentialsSchema = z.object({
   email: z.string(),
@@ -27,7 +35,7 @@ const authConfig = {
         const validateFields = CredentialsSchema.safeParse(credentials);
 
         if (!validateFields.success) {
-          return null;
+          throw new CustomCredentialsError('Something went wrong');
         }
 
         const { email, password } = validateFields.data;
@@ -36,7 +44,7 @@ const authConfig = {
         const user = query[0];
 
         if (!user?.password || !bcrypt.compareSync(password, user.password)) {
-          return null;
+          throw new CustomCredentialsError('Invalid identifier or password');
         }
 
         return user;

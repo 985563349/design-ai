@@ -12,7 +12,7 @@ import UserDropdown from '@/components/user-dropdown';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
 import { useEditorHistory } from '../providers/editor-history';
-import { downloadFile } from '../lib/utils';
+import { downloadFile } from '../lib/helpers';
 
 const Navbar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
