@@ -9,8 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 const UserDropdown: React.FC = () => {
   const session = useSession();
 
-  console.log(session);
-
   if (session.status === 'loading') {
     return <Loader className="size-4 text-muted-foreground animate-spin" />;
   }

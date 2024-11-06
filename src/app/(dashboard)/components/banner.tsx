@@ -23,12 +23,7 @@ const Banner: React.FC = () => {
   });
 
   const onClick = () => {
-    mutation.mutate({
-      name: '未命名项目',
-      json: '',
-      width: 900,
-      height: 1200,
-    });
+    mutation.mutate({ name: 'Untitled project', json: '', width: 900, height: 1200 });
   };
 
   return (

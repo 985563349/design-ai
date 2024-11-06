@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { env } from 'hono/adapter';
-import { initAuthConfig } from '@hono/auth-js';
+import { authHandler, initAuthConfig, verifyAuth } from '@hono/auth-js';
 
 import authConfig from '@/auth.config';
 import users from './users';
@@ -18,6 +18,9 @@ app.use(
   '*',
   initAuthConfig((c) => ({ secret: env(c).AUTH_SECRET, ...authConfig }))
 );
+
+app.use('/users', authHandler());
+app.use('*', verifyAuth());
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const routes = app.route('/users', users).route('/projects', projects).route('/templates', templates).route('/images', images);

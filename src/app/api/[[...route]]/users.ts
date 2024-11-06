@@ -9,14 +9,7 @@ import { users } from '@/db/schema';
 
 const app = new Hono().post(
   '/',
-  zValidator(
-    'json',
-    z.object({
-      name: z.string(),
-      email: z.string().email(),
-      password: z.string().min(3).max(20),
-    })
-  ),
+  zValidator('json', z.object({ name: z.string(), email: z.string().email(), password: z.string().min(3).max(20) })),
   async (c) => {
     const { name, email, password } = c.req.valid('json');
     const result = await db.select().from(users).where(eq(users.email, email));

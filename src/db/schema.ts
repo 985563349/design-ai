@@ -84,14 +84,12 @@ export const projects = pgTable('project', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+  userId: text('userId').references(() => users.id, { onDelete: 'cascade' }),
   json: text('json').notNull(),
   width: integer('width').notNull(),
   height: integer('height').notNull(),
   thumbnailUrl: text('thumbnailUrl'),
-  isTemplate: boolean('isTemplate'),
+  isTemplate: boolean('isTemplate').default(false),
   createdAt: timestamp('createdAt', { mode: 'date' }).notNull(),
   updateAt: timestamp('updateAt', { mode: 'date' }).notNull(),
 });
