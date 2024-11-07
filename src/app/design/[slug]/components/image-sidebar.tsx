@@ -2,13 +2,14 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { fabric } from 'fabric';
 import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle, Loader } from 'lucide-react';
+import { fabric } from 'fabric';
+import { AlertTriangle, ImageIcon, Loader } from 'lucide-react';
 
+import { client } from '@/lib/hono';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
-import { client } from '@/lib/hono';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
 
@@ -53,41 +54,50 @@ const ImageSidebar: React.FC = () => {
       description="Add images to your canvas"
       onClose={() => setActiveTool('select')}
     >
-      {isLoading && (
-        <div className="flex-1 flex items-center justify-center w-80">
-          <Loader className="text-muted-foreground animate-spin" />
+      <div className="flex-1 flex flex-col gap-y-4 w-80 overflow-hidden">
+        <div className="px-4 pt-4">
+          <Button className="w-full">
+            <ImageIcon />
+            Open Image
+          </Button>
         </div>
-      )}
 
-      {isError && (
-        <div className="flex-1 flex items-center justify-center flex-col gap-y-4 w-80">
-          <AlertTriangle className="text-muted-foreground" />
-          <p className="text-muted-foreground">Failed to fetch images</p>
-        </div>
-      )}
-
-      {data && (
-        <ScrollArea className="w-80">
-          <div className="grid grid-cols-2 gap-4 p-4">
-            {data.map((image) => (
-              <button
-                key={image.id}
-                className="relative border rounded-sm w-full h-28 group hover:opacity-75 transition bg-muted overflow-hidden"
-                onClick={() => addImage(image.urls.regular)}
-              >
-                <Image className="object-cover" fill src={image.urls.small} alt={image.alt_description ?? 'Image'} />
-                <Link
-                  className="absolute left-0 bottom-0 p-1 w-full text-xs text-left truncate text-white bg-black/50 opacity-0 group-hover:opacity-100 hover:underline"
-                  href={image.links.html}
-                  target="_blank"
-                >
-                  {image.user.name}
-                </Link>
-              </button>
-            ))}
+        {isLoading && (
+          <div className="flex-1 flex items-center justify-center">
+            <Loader className="text-muted-foreground animate-spin" />
           </div>
-        </ScrollArea>
-      )}
+        )}
+
+        {isError && (
+          <div className="flex-1 flex items-center justify-center flex-col gap-y-4">
+            <AlertTriangle className="text-muted-foreground" />
+            <p className="text-muted-foreground">Failed to fetch images</p>
+          </div>
+        )}
+
+        {data && (
+          <ScrollArea>
+            <div className="grid grid-cols-2 gap-4 px-4 pb-4">
+              {data.map((image) => (
+                <button
+                  key={image.id}
+                  className="relative border rounded-sm w-full h-28 group hover:opacity-75 transition bg-muted overflow-hidden"
+                  onClick={() => addImage(image.urls.regular)}
+                >
+                  <Image className="object-cover" fill src={image.urls.small} alt={image.alt_description ?? 'Image'} />
+                  <Link
+                    className="absolute left-0 bottom-0 p-1 w-full text-xs text-left truncate text-white bg-black/50 opacity-0 group-hover:opacity-100 hover:underline"
+                    href={image.links.html}
+                    target="_blank"
+                  >
+                    {image.user.name}
+                  </Link>
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
+        )}
+      </div>
     </Drawer>
   );
 };

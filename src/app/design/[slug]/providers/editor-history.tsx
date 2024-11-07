@@ -46,6 +46,12 @@ export const EditorHistoryProvider: React.FC<EditorHistoryProviderProps> = ({ st
     if (!skip && !skipRef.current) {
       setIndex(history.current.push(json) - 1);
     }
+
+    const workspace = stage.getObjects().find((object) => object.name === 'workspace');
+    const width = workspace?.width;
+    const height = workspace?.height;
+
+    stage.fire('saved', { json, width, height });
   };
 
   const undo = () => {

@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import { useMutationState } from '@tanstack/react-query';
 import { useFilePicker } from 'use-file-picker';
-import { ChevronDown, MousePointerClick, Undo2, Redo2, Download } from 'lucide-react';
-import { BsCloudCheck, BsFiletypeJpg, BsFiletypeJson, BsFiletypePng, BsFiletypeSvg } from 'react-icons/bs';
+import { ChevronDown, MousePointerClick, Undo2, Redo2, Download, Loader } from 'lucide-react';
+import { BsCloudCheck, BsCloudSlash, BsFiletypeJpg, BsFiletypeJson, BsFiletypePng, BsFiletypeSvg } from 'react-icons/bs';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -15,11 +16,22 @@ import { useEditorHistory } from '../providers/editor-history';
 import { downloadFile } from '../lib/helpers';
 
 const Navbar: React.FC = () => {
+  const id = useEditorStore((state) => state.id);
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
   const { loadFromJSON, exportImage, exportJSON } = useEditorController();
   const { canUndo, canRedo, save, undo, redo, clear, pause, resume } = useEditorHistory();
+
+  const mutationState = useMutationState({
+    filters: {
+      mutationKey: ['projects', id],
+      exact: true,
+    },
+    select: (mutation) => mutation.state.status,
+  });
+
+  const status = mutationState.at(-1);
 
   const { openFilePicker } = useFilePicker({
     accept: '.json',
@@ -105,8 +117,26 @@ const Navbar: React.FC = () => {
         <Separator orientation="vertical" className="mx-2" />
 
         <div className="flex items-center gap-x-2 text-muted-foreground">
-          <BsCloudCheck className="size-5" />
-          <p className="text-xs">Saved</p>
+          {status === 'pending' && (
+            <>
+              <Loader className="size-5 animate-spin" />
+              <p className="text-xs">Saving...</p>
+            </>
+          )}
+
+          {status === 'error' && (
+            <>
+              <BsCloudSlash className="size-5" />
+              <p className="text-xs">Failed to save</p>
+            </>
+          )}
+
+          {(status === 'success' || !status) && (
+            <>
+              <BsCloudCheck className="size-5" />
+              <p className="text-xs">Saved</p>
+            </>
+          )}
         </div>
       </div>
 

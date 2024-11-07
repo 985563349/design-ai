@@ -4,13 +4,16 @@ import { useRef, useEffect } from 'react';
 import { fabric } from 'fabric';
 
 export interface StageProps {
+  width?: number;
+  height?: number;
+  initialState?: string;
   onInit?: (stage: fabric.Canvas) => void;
 }
 
-const Stage: React.FC<StageProps> = ({ onInit }) => {
+const Stage: React.FC<StageProps> = (props) => {
+  const propsRef = useRef(props);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const onInitRef = useRef(onInit);
 
   const createStage = (container: HTMLElement, canvas: HTMLCanvasElement) => {
     const stage = new fabric.Canvas(canvas, { controlsAboveOverlay: true, preserveObjectStacking: true });
@@ -31,8 +34,8 @@ const Stage: React.FC<StageProps> = ({ onInit }) => {
     stage.setHeight(height);
 
     const workspace = new fabric.Rect({
-      width: 900,
-      height: 1200,
+      width: propsRef.current.width,
+      height: propsRef.current.height,
       name: 'workspace',
       fill: '#ffffff',
       selectable: false,
@@ -93,11 +96,21 @@ const Stage: React.FC<StageProps> = ({ onInit }) => {
     }
 
     const stage = createStage(container, canvas);
-    const resizeObserver = new ResizeObserver(() => resizeStageToContainerSize(container, stage));
+    const initialState = propsRef.current.initialState;
 
+    // Initial rendering
+    if (initialState) {
+      stage.loadFromJSON(JSON.parse(initialState), () => {
+        stage.renderAll();
+        resizeStageToContainerSize(container, stage);
+      });
+    }
+
+    const resizeObserver = new ResizeObserver(() => resizeStageToContainerSize(container, stage));
     resizeObserver.observe(container);
+
     stage.on('resize', () => resizeStageToContainerSize(container, stage));
-    onInitRef.current?.(stage);
+    propsRef.current?.onInit?.(stage);
 
     return () => {
       stage.dispose();

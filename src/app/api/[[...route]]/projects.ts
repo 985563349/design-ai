@@ -10,20 +10,24 @@ import { projects } from '@/db/schema';
 const insertProjectSchema = createInsertSchema(projects);
 
 const app = new Hono()
-  .get('/', zValidator('query', z.object({ page: z.coerce.number(), limit: z.coerce.number() })), async (c) => {
-    const auth = c.get('authUser');
-    const { page, limit } = c.req.valid('query');
+  .get(
+    '/',
+    zValidator('query', z.object({ page: z.coerce.number().default(1), limit: z.coerce.number().default(20) })),
+    async (c) => {
+      const auth = c.get('authUser');
+      const { page, limit } = c.req.valid('query');
 
-    const result = await db
-      .select()
-      .from(projects)
-      .where(eq(projects.userId, auth.session.user!.id!))
-      .offset((page - 1) * limit)
-      .limit(limit)
-      .orderBy(desc(projects.createdAt));
+      const result = await db
+        .select()
+        .from(projects)
+        .where(eq(projects.userId, auth.session.user!.id!))
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .orderBy(desc(projects.createdAt));
 
-    return c.json({ data: result });
-  })
+      return c.json({ data: result, nextPage: result.length === limit ? page + 1 : null });
+    }
+  )
 
   .get('/:id', zValidator('param', z.object({ id: z.string() })), async (c) => {
     const auth = c.get('authUser');
@@ -52,12 +56,7 @@ const app = new Hono()
 
       const result = await db
         .insert(projects)
-        .values({
-          userId: auth.session.user!.id!,
-          createdAt: new Date(),
-          updateAt: new Date(),
-          ...json,
-        })
+        .values({ ...json, userId: auth.session.user!.id!, createdAt: new Date(), updateAt: new Date() })
         .returning();
 
       const project = result[0];

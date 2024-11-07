@@ -31,6 +31,8 @@ import useOnSelectionChange from '../hooks/use-on-selection-change';
 const Toolbar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
+  const fillColor = useEditorStore((state) => state.fillColor);
+  const strokeColor = useEditorStore((state) => state.strokeColor);
   const fontFamily = useEditorStore((state) => state.fontFamily);
 
   const { stage, copy, paste, bringForward, sendBackwards, remove } = useEditorController();
@@ -39,8 +41,8 @@ const Toolbar: React.FC = () => {
   const isSelectedText = selectedObject?.type === 'text';
   const isSelectedImage = selectedObject?.type === 'image';
 
-  const effectiveFillColor = selectedObject?.get('fill');
-  const effectiveStrokeColor = selectedObject?.get('stroke');
+  const effectiveFillColor = selectedObject?.get('fill') ?? fillColor;
+  const effectiveStrokeColor = selectedObject?.get('stroke') ?? strokeColor;
   // @ts-ignore
   const effectiveFontFamily = selectedObject?.get('fontFamily') ?? fontFamily;
 
@@ -48,12 +50,12 @@ const Toolbar: React.FC = () => {
     const textObject = selectedObject as fabric.Text;
 
     return {
-      fontWeight: textObject.get('fontWeight') ?? 400,
-      fontStyle: textObject.get('fontStyle'),
-      underline: textObject.get('underline'),
-      linethrough: textObject.get('linethrough'),
-      textAlign: textObject.get('textAlign'),
-      fontSize: textObject.get('fontSize') ?? 0,
+      fontWeight: textObject?.get('fontWeight') ?? 400,
+      fontStyle: textObject?.get('fontStyle'),
+      underline: textObject?.get('underline'),
+      linethrough: textObject?.get('linethrough'),
+      textAlign: textObject?.get('textAlign'),
+      fontSize: textObject?.get('fontSize') ?? 0,
     };
   }, [selectedObject]);
 

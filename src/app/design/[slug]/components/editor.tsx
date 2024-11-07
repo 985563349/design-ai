@@ -1,11 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import type { InferRequestType, InferResponseType } from 'hono';
+import { debounce } from 'lodash';
+
+import { client } from '@/lib/hono';
 
 import Navbar from './navbar';
 import Sidebar from './sidebar';
 import Toolbar from './toolbar';
 import Stage from './stage';
+import type { StageProps } from './stage';
 import Footer from './footer';
 import TemplateSidebar from './template-sidebar';
 import ImageSidebar from './image-sidebar';
@@ -25,11 +31,42 @@ import { EditorStoreProvider } from '../providers/editor-store';
 import { EditorControllerProvider } from '../providers/editor-controller';
 import { EditorHistoryProvider } from '../providers/editor-history';
 
-const Editor: React.FC = () => {
+export interface EditorProps extends Omit<StageProps, 'onInit'> {
+  id: string;
+}
+
+const $patch = client.api.projects[':id'].$patch;
+
+const Editor: React.FC<EditorProps> = ({ id, width, height, initialState }) => {
   const [stage, setStage] = useState<fabric.Canvas>();
 
+  const { mutate } = useMutation<InferResponseType<typeof $patch, 200>, Error, InferRequestType<typeof $patch>['json']>({
+    mutationKey: ['projects', id],
+    mutationFn: async (data) => {
+      const response = await $patch({ param: { id }, json: data });
+
+      if (!response.ok) {
+        throw new Error('Something went wrong');
+      }
+
+      return response.json();
+    },
+  });
+
+  useEffect(() => {
+    if (!stage) return;
+
+    // Synchronize to the cloud
+    const onSaved = debounce((event: any) => mutate(event), 500);
+    stage.on('saved', onSaved);
+
+    return () => {
+      stage.off('saved', onSaved);
+    };
+  }, [stage, mutate]);
+
   return (
-    <EditorStoreProvider>
+    <EditorStoreProvider initState={{ id }}>
       <EditorControllerProvider stage={stage}>
         <EditorHistoryProvider stage={stage}>
           <div className="flex flex-col h-full">
@@ -52,7 +89,7 @@ const Editor: React.FC = () => {
               <main className="flex-1 flex flex-col overflow-hidden">
                 <Toolbar />
                 <div className="flex-1 overflow-hidden bg-slate-100">
-                  <Stage onInit={setStage} />
+                  <Stage width={width} height={height} initialState={initialState} onInit={setStage} />
                 </div>
                 <Footer />
               </main>

@@ -21,6 +21,7 @@ type ActiveTool =
   | 'filter';
 
 type EditorState = {
+  id?: string;
   activeTool: ActiveTool;
   fillColor: string;
   strokeColor: string;
@@ -49,7 +50,7 @@ const defaultInitState: EditorState = {
   fontFamily: 'Arial',
 };
 
-const createEditorStore = (initState: EditorState = defaultInitState) => {
+const createEditorStore = (initState: EditorState) => {
   return createStore<EditorStore>()((set) => ({
     ...initState,
     setActiveTool: (activeTool) => set({ activeTool }),
@@ -66,14 +67,15 @@ export type EditorStoreApi = ReturnType<typeof createEditorStore>;
 export const EditorStoreContext = createContext<EditorStoreApi | null>(null);
 
 export interface EditorStoreProviderProps {
+  initState?: Partial<EditorState>;
   children: React.ReactNode;
 }
 
-export const EditorStoreProvider: React.FC<EditorStoreProviderProps> = ({ children }) => {
+export const EditorStoreProvider: React.FC<EditorStoreProviderProps> = ({ initState, children }) => {
   const storeRef = useRef<EditorStoreApi>();
 
   if (!storeRef.current) {
-    storeRef.current = createEditorStore();
+    storeRef.current = createEditorStore({ ...defaultInitState, ...initState });
   }
 
   return <EditorStoreContext.Provider value={storeRef.current}>{children}</EditorStoreContext.Provider>;

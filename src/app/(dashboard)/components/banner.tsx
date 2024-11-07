@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import type { InferRequestType, InferResponseType } from 'hono';
 import { ArrowRight, Sparkles } from 'lucide-react';
@@ -10,7 +11,9 @@ import { Button } from '@/components/ui/button';
 const $post = client.api.projects.$post;
 
 const Banner: React.FC = () => {
-  const mutation = useMutation<InferResponseType<typeof $post>, Error, InferRequestType<typeof $post>['json']>({
+  const router = useRouter();
+
+  const mutation = useMutation<InferResponseType<typeof $post, 200>, Error, InferRequestType<typeof $post>['json']>({
     mutationFn: async (json) => {
       const response = await $post({ json });
 
@@ -18,7 +21,10 @@ const Banner: React.FC = () => {
         throw new Error('Something went wrong');
       }
 
-      return await response.json();
+      return response.json();
+    },
+    onSuccess({ data }) {
+      router.push(`/design/${data.id}`);
     },
   });
 
