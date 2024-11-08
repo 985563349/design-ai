@@ -79,9 +79,9 @@ const ImageSidebar: React.FC = () => {
           <ScrollArea>
             <div className="grid grid-cols-2 gap-4 px-4 pb-4">
               {data.map((image) => (
-                <button
+                <div
                   key={image.id}
-                  className="relative border rounded-sm w-full h-28 group hover:opacity-75 transition bg-muted overflow-hidden"
+                  className="relative border rounded-sm w-full h-28 group hover:opacity-75 transition bg-muted overflow-hidden cursor-pointer"
                   onClick={() => addImage(image.urls.regular)}
                 >
                   <Image className="object-cover" fill src={image.urls.small} alt={image.alt_description ?? 'Image'} />
@@ -92,7 +92,7 @@ const ImageSidebar: React.FC = () => {
                   >
                     {image.user.name}
                   </Link>
-                </button>
+                </div>
               ))}
             </div>
           </ScrollArea>

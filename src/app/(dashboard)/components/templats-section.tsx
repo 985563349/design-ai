@@ -1,12 +1,18 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import type { InferRequestType, InferResponseType } from 'hono';
 import { Loader, Search, TriangleAlert } from 'lucide-react';
 
 import { client } from '@/lib/hono';
 
+const $post = client.api.projects.$post;
+
 const TemplatesSection: React.FC = () => {
+  const router = useRouter();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['templates'],
     queryFn: async () => {
@@ -19,6 +25,25 @@ const TemplatesSection: React.FC = () => {
       return (await response.json()).data;
     },
   });
+
+  const mutation = useMutation<InferResponseType<typeof $post, 200>, Error, InferRequestType<typeof $post>['json']>({
+    mutationFn: async (json) => {
+      const response = await $post({ json });
+
+      if (!response.ok) {
+        throw new Error('Something went wrong');
+      }
+
+      return response.json();
+    },
+    onSuccess({ data }) {
+      router.push(`/design/${data.id}`);
+    },
+  });
+
+  const onClick = (template: InferRequestType<typeof $post>['json']) => {
+    mutation.mutate({ ...template, name: 'Untitled project' });
+  };
 
   if (isLoading) {
     return (
@@ -61,7 +86,7 @@ const TemplatesSection: React.FC = () => {
 
       <div className="grid grid-cols-8 gap-4">
         {data?.map((template, index) => (
-          <div className="space-y-2 group cursor-pointer" key={index}>
+          <div className="space-y-2 group cursor-pointer" key={index} onClick={() => onClick(template)}>
             <div style={{ aspectRatio: '900/1200' }} className="relative rounded-xl overflow-hidden">
               <Image
                 className="object-cover transform group-hover:scale-105 transition"

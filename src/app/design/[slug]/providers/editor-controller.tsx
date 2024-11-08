@@ -204,9 +204,8 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
     if (!stage) return;
 
     stage.clear();
-
     stage.loadFromJSON(JSON.parse(json), () => {
-      stage.renderAll();
+      stage.fire('resize');
       callback?.();
     });
   };

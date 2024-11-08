@@ -101,16 +101,17 @@ const Stage: React.FC<StageProps> = (props) => {
     // Initial rendering
     if (initialState) {
       stage.loadFromJSON(JSON.parse(initialState), () => {
-        stage.renderAll();
         resizeStageToContainerSize(container, stage);
+        propsRef.current?.onInit?.(stage);
       });
+    } else {
+      propsRef.current?.onInit?.(stage);
     }
 
     const resizeObserver = new ResizeObserver(() => resizeStageToContainerSize(container, stage));
     resizeObserver.observe(container);
 
     stage.on('resize', () => resizeStageToContainerSize(container, stage));
-    propsRef.current?.onInit?.(stage);
 
     return () => {
       stage.dispose();

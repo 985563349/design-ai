@@ -58,13 +58,13 @@ export const EditorHistoryProvider: React.FC<EditorHistoryProviderProps> = ({ st
     if (!stage || !canUndo) return;
 
     skipRef.current = true;
-    stage.clear();
 
     const previousIndex = index - 1;
     const previousState = JSON.parse(history.current[previousIndex]);
 
+    stage.clear();
     stage.loadFromJSON(previousState, () => {
-      stage.renderAll();
+      stage.fire('resize');
       setIndex(previousIndex);
       skipRef.current = false;
     });
@@ -74,13 +74,13 @@ export const EditorHistoryProvider: React.FC<EditorHistoryProviderProps> = ({ st
     if (!stage || !canRedo) return;
 
     skipRef.current = true;
-    stage.clear();
 
     const nextIndex = index + 1;
     const nextState = JSON.parse(history.current[nextIndex]);
 
+    stage.clear();
     stage.loadFromJSON(nextState, () => {
-      stage.renderAll();
+      stage.fire('resize');
       setIndex(nextIndex);
       skipRef.current = false;
     });
