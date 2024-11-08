@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Copy,
   Italic,
+  SquareSplitHorizontal,
   Strikethrough,
   Trash,
   Underline,
@@ -262,16 +263,29 @@ const Toolbar: React.FC = () => {
         )}
 
         {isSelectedImage && (
-          <Hint label="Filters" side="bottom" sideOffset={5}>
-            <Button
-              className={cn(activeTool === 'filter' && 'bg-gray-100')}
-              variant="ghost"
-              size="icon"
-              onClick={() => setActiveTool('filter')}
-            >
-              <TbColorFilter />
-            </Button>
-          </Hint>
+          <>
+            <Hint label="Filters" side="bottom" sideOffset={5}>
+              <Button
+                className={cn(activeTool === 'filter' && 'bg-gray-100')}
+                variant="ghost"
+                size="icon"
+                onClick={() => setActiveTool('filter')}
+              >
+                <TbColorFilter />
+              </Button>
+            </Hint>
+
+            <Hint label="Remove background" side="bottom" sideOffset={5}>
+              <Button
+                className={cn(activeTool === 'remove-background' && 'bg-gray-100')}
+                variant="ghost"
+                size="icon"
+                onClick={() => setActiveTool('remove-background')}
+              >
+                <SquareSplitHorizontal />
+              </Button>
+            </Hint>
+          </>
         )}
 
         <Hint label="Bring forward" side="bottom" sideOffset={5}>

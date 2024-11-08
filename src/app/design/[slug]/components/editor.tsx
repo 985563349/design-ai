@@ -18,12 +18,14 @@ import ImageSidebar from './image-sidebar';
 import TextSidebar from './text-sidebar';
 import ShapeSidebar from './shape-sidebar';
 import DrawSidebar from './draw-sidebar';
+import AiSidebar from './ai-sidebar';
 import SettingsSidebar from './settings-sidebar';
 import FillColorSidebar from './fill-color-sidebar';
 import StrokeColorSidebar from './stroke-color-sidebar';
 import FontSidebar from './font-sidebar';
 import StrokeWidthSidebar from './stroke-width-sidebar';
 import FilterSidebar from './filter-sidebar';
+import RemoveBackgroundSidebar from './remove-background-sidebar';
 import OpacitySidebar from './opacity-sidebar';
 import HotKeysListener from './hot-keys-listener';
 
@@ -78,12 +80,14 @@ const Editor: React.FC<EditorProps> = ({ id, width, height, initialState }) => {
               <TextSidebar />
               <ShapeSidebar />
               <DrawSidebar />
+              <AiSidebar />
               <SettingsSidebar />
               <FillColorSidebar />
               <StrokeColorSidebar />
               <FontSidebar />
               <StrokeWidthSidebar />
               <FilterSidebar />
+              <RemoveBackgroundSidebar />
               <OpacitySidebar />
               <HotKeysListener />
               <main className="flex-1 flex flex-col overflow-hidden">

@@ -17,7 +17,7 @@ const StrokeColorSidebar: React.FC = () => {
 
   const { stage } = useEditorController();
 
-  const [selectedObject, setSelectedObjects] = useState<fabric.Object>();
+  const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const effectiveStrokeColor = selectedObject?.get('stroke') ?? strokeColor;
 
   const changeStrokeColor = (color: typeof strokeColor) => {
@@ -28,7 +28,7 @@ const StrokeColorSidebar: React.FC = () => {
     setStrokeColor(color);
   };
 
-  useOnSelectionChange((objects) => setSelectedObjects(objects[0]));
+  useOnSelectionChange((objects) => setSelectedObject(objects[0]));
 
   return (
     <Drawer

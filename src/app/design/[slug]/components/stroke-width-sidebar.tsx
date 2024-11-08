@@ -22,7 +22,7 @@ const StrokeWidthSidebar: React.FC = () => {
 
   const { stage } = useEditorController();
 
-  const [selectedObject, setSelectedObjects] = useState<fabric.Object>();
+  const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const effectiveStrokeWidth = selectedObject?.get('strokeWidth') ?? strokeWidth;
   const effectiveStrokeDashArray = selectedObject?.get('strokeDashArray') ?? strokeDashArray;
 
@@ -42,7 +42,7 @@ const StrokeWidthSidebar: React.FC = () => {
     setStrokeDashArray(type);
   };
 
-  useOnSelectionChange((objects) => setSelectedObjects(objects[0]));
+  useOnSelectionChange((objects) => setSelectedObject(objects[0]));
 
   return (
     <Drawer

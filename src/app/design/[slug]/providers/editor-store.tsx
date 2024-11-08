@@ -18,7 +18,8 @@ type ActiveTool =
   | 'stroke-width'
   | 'opacity'
   | 'font'
-  | 'filter';
+  | 'filter'
+  | 'remove-background';
 
 type EditorState = {
   id?: string;
