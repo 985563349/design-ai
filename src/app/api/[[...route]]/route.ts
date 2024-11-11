@@ -8,6 +8,7 @@ import users from './users';
 import projects from './projects';
 import templates from './templates';
 import images from './images';
+import ai from './ai';
 
 // Revert to 'edge' if planning on running on the edge
 export const runtime = 'nodejs';
@@ -23,7 +24,12 @@ app.use('/users', authHandler());
 app.use('*', verifyAuth());
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const routes = app.route('/users', users).route('/projects', projects).route('/templates', templates).route('/images', images);
+const routes = app
+  .route('/users', users)
+  .route('/projects', projects)
+  .route('/templates', templates)
+  .route('/images', images)
+  .route('/ai', ai);
 
 export const GET = handle(app);
 export const POST = handle(app);
