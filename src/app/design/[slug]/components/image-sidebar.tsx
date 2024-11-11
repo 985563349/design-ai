@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { fabric } from 'fabric';
+import { fileOpen } from 'browser-fs-access';
 import { AlertTriangle, ImageIcon, Loader } from 'lucide-react';
 
 import { client } from '@/lib/hono';
@@ -47,6 +48,18 @@ const ImageSidebar: React.FC = () => {
     fabric.Image.fromURL(url, callback, { crossOrigin: 'anonymous' });
   };
 
+  const openImage = async () => {
+    try {
+      const file = await fileOpen({ extensions: ['.png', '.jpg', '.jpeg', '.svg', '.webp'] });
+      const reader = new FileReader();
+
+      reader.readAsDataURL(file);
+      reader.onload = () => addImage(reader.result as string);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Drawer
       visible={activeTool === 'images'}
@@ -56,7 +69,7 @@ const ImageSidebar: React.FC = () => {
     >
       <div className="flex-1 flex flex-col gap-y-4 w-80 overflow-hidden">
         <div className="px-4 pt-4">
-          <Button className="w-full">
+          <Button className="w-full" onClick={openImage}>
             <ImageIcon />
             Open Image
           </Button>
