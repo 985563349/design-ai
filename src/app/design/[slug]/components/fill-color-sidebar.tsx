@@ -7,6 +7,7 @@ import Drawer from '@/components/drawer';
 import ColorPicker from '@/components/color-picker';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
+import { useEditorHistory } from '../providers/editor-history';
 import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const FillColorSidebar: React.FC = () => {
@@ -16,16 +17,23 @@ const FillColorSidebar: React.FC = () => {
   const setFillColor = useEditorStore((state) => state.setFillColor);
 
   const { stage } = useEditorController();
+  const { save } = useEditorHistory();
 
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const effectiveFillColor = selectedObject?.get('fill') ?? fillColor;
 
-  const changeFillColor = (color: typeof fillColor) => {
+  const onColorChange = (color: string) => {
     if (stage) {
       stage.getActiveObjects().forEach((object) => object.set({ fill: color }));
       stage.renderAll();
     }
     setFillColor(color);
+  };
+
+  const onChangeComplete = () => {
+    if (stage?.getActiveObjects().length) {
+      save();
+    }
   };
 
   useOnSelectionChange((objects) => setSelectedObject(objects[0]));
@@ -39,7 +47,11 @@ const FillColorSidebar: React.FC = () => {
     >
       <ScrollArea className="w-80">
         <div className="p-4">
-          <ColorPicker value={effectiveFillColor as string} onChange={changeFillColor} />
+          <ColorPicker
+            value={effectiveFillColor as string}
+            onChange={onColorChange}
+            onChangeComplete={onChangeComplete}
+          />
         </div>
       </ScrollArea>
     </Drawer>

@@ -10,34 +10,34 @@ import { client } from '@/lib/hono';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
+import useDerivedState from '@/hooks/use-derived-state';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
+import { useEditorHistory } from '../providers/editor-history';
 import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const RemoveBackgroundSidebar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
-  const { stage, getWorkspace, add } = useEditorController();
+  const { stage } = useEditorController();
+  const { save } = useEditorHistory();
 
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
+  const [currentSrc, setCurrentSrc] = useDerivedState<string>(
+    // @ts-ignore
+    () => selectedObject?._originalElement?.currentSrc,
+    [selectedObject]
+  );
 
-  // @ts-ignore
-  const src = selectedObject?._originalElement?.currentSrc;
+  const changeImageSrc = (src: string) => {
+    if (!stage || !selectedObject) return;
 
-  const addImage = (url: string) => {
-    if (!stage) return;
-
-    const callback = (image: fabric.Image) => {
-      const workspace = getWorkspace();
-
-      image.scaleToWidth(workspace?.width ?? 0);
-      image.scaleToHeight(workspace?.height ?? 0);
-
-      add(image);
-    };
-
-    fabric.Image.fromURL(url, callback, { crossOrigin: 'anonymous' });
+    (selectedObject as fabric.Image).setSrc(src, () => {
+      stage.renderAll();
+      save();
+    });
+    setCurrentSrc(src);
   };
 
   const mutation = useMutation({
@@ -51,8 +51,8 @@ const RemoveBackgroundSidebar: React.FC = () => {
       return response.json();
     },
 
-    onSuccess({ data }) {
-      addImage(data);
+    onSuccess({ url }) {
+      changeImageSrc(url);
     },
   });
 
@@ -66,24 +66,24 @@ const RemoveBackgroundSidebar: React.FC = () => {
       onClose={() => setActiveTool('select')}
     >
       <div className="flex-1 flex flex-col w-80 overflow-hidden">
-        {!src && (
+        {!currentSrc && (
           <div className="flex-1 flex flex-col items-center justify-center gap-y-4">
             <AlertTriangleIcon className="text-muted-foreground" />
             <p className="text-xs text-muted-foreground">Feature not available for this object</p>
           </div>
         )}
 
-        {src && (
+        {currentSrc && (
           <ScrollArea>
             <div className="p-4 space-y-4">
               <div className="relative aspect-square rounded-md overflow-hidden transition bg-muted">
-                <Image src={src} alt="Image" className="object-cover" fill />
+                <Image src={currentSrc} alt="Image" className="object-cover" fill />
               </div>
               <Button
                 className="w-full"
                 disabled={mutation.isPending}
                 onClick={() => {
-                  mutation.mutate(src);
+                  mutation.mutate(currentSrc);
                 }}
               >
                 {mutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}

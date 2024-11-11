@@ -29,7 +29,7 @@ const SignUpForm: React.FC = () => {
 
       if (!response.ok) {
         const { error } = await response.json();
-        throw new Error(error);
+        throw new Error(error ?? 'Something went wrong');
       }
 
       await signIn('credentials', { ...json, redirect: false });

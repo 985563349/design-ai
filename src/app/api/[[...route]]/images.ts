@@ -7,22 +7,22 @@ const unsplash = createApi({
 });
 
 const app = new Hono().get('/', async (c) => {
-  const images = await unsplash.photos.getRandom({
+  const result = await unsplash.photos.getRandom({
     collectionIds: ['20210505'],
     count: 50,
   });
 
-  if (images.errors) {
+  if (result.errors) {
     return c.json({ error: 'Something went wrong' }, 400);
   }
 
-  let response = images.response;
+  let images = result.response;
 
-  if (!Array.isArray(response)) {
-    response = [response];
+  if (!Array.isArray(images)) {
+    images = [images];
   }
 
-  return c.json({ data: response });
+  return c.json(images);
 });
 
 export default app;

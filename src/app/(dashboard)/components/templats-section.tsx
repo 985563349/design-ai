@@ -22,7 +22,7 @@ const TemplatesSection: React.FC = () => {
         throw new Error('Failed to fetch templates');
       }
 
-      return (await response.json()).data;
+      return response.json();
     },
   });
 
@@ -36,7 +36,7 @@ const TemplatesSection: React.FC = () => {
 
       return response.json();
     },
-    onSuccess({ data }) {
+    onSuccess(data) {
       router.push(`/design/${data.id}`);
     },
   });
@@ -84,7 +84,7 @@ const TemplatesSection: React.FC = () => {
     <div>
       <h3 className="mb-4 text-lg font-semibold">Start from a template</h3>
 
-      <div className="grid grid-cols-8 gap-4">
+      <div className="grid grid-cols-4 lg:grid-cols-8 gap-4">
         {data?.map((template, index) => (
           <div className="space-y-2 group cursor-pointer" key={index} onClick={() => onClick(template)}>
             <div style={{ aspectRatio: '900/1200' }} className="relative rounded-xl overflow-hidden">

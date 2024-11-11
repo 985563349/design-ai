@@ -44,7 +44,7 @@ const app = new Hono()
       return c.json({ error: 'Project not found' }, 404);
     }
 
-    return c.json({ data: project });
+    return c.json(project);
   })
 
   .post(
@@ -65,7 +65,7 @@ const app = new Hono()
         return c.json({ error: 'Something went wrong' }, 400);
       }
 
-      return c.json({ data: project });
+      return c.json(project);
     }
   )
 
@@ -90,7 +90,7 @@ const app = new Hono()
         return c.json({ error: 'Project not found' }, 404);
       }
 
-      return c.json({ data: project });
+      return c.json(project);
     }
   )
 
@@ -109,7 +109,7 @@ const app = new Hono()
       return c.json({ error: 'Project not found' }, 404);
     }
 
-    return c.json({ data: project });
+    return c.json(project);
   });
 
 export default app;

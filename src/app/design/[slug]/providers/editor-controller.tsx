@@ -20,7 +20,7 @@ export type EditorControllerApi = {
   setWorkspaceSize: (size: Record<'width' | 'height', number>) => void;
   exportImage: () => string | void;
   exportJSON: () => string | void;
-  loadFromJSON: (json: string, callback?: VoidFunction) => void;
+  loadFromJSON: (json: string) => Promise<void>;
 };
 
 export const EditorControllerContext = createContext<EditorControllerApi | null>(null);
@@ -200,13 +200,18 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
     return `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(currentState, null, '\t'))}`;
   };
 
-  const loadFromJSON = (json: string, callback?: VoidFunction) => {
-    if (!stage) return;
+  const loadFromJSON = (json: string) => {
+    return new Promise<void>((resolve, reject) => {
+      if (!stage) {
+        reject();
+        return;
+      }
 
-    stage.clear();
-    stage.loadFromJSON(JSON.parse(json), () => {
-      stage.fire('resize');
-      callback?.();
+      stage.clear();
+      stage.loadFromJSON(JSON.parse(json), () => {
+        stage.fire('resize');
+        resolve();
+      });
     });
   };
 

@@ -21,7 +21,7 @@ const SignInForm: React.FC = () => {
       const response = await signIn('credentials', { ...Object.fromEntries(formData), redirect: false });
 
       if (response?.error && response.code) {
-        throw new Error(response.code);
+        throw new Error(response.code ?? 'Something went wrong');
       }
     },
 

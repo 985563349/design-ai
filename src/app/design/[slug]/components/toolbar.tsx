@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { debounce } from 'lodash';
 import {
   AlignCenter,
   AlignLeft,
@@ -27,6 +28,7 @@ import InputNumber from '@/components/input-number';
 import useDerivedState from '@/hooks/use-derived-state';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
+import { useEditorHistory } from '../providers/editor-history';
 import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const Toolbar: React.FC = () => {
@@ -37,6 +39,8 @@ const Toolbar: React.FC = () => {
   const fontFamily = useEditorStore((state) => state.fontFamily);
 
   const { stage, copy, paste, bringForward, sendBackwards, remove } = useEditorController();
+  const { save } = useEditorHistory();
+  const debounceSave = useCallback(debounce(save, 300), [save]);
 
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const isSelectedText = selectedObject?.type === 'text';
@@ -61,15 +65,16 @@ const Toolbar: React.FC = () => {
   }, [selectedObject]);
 
   const changeTextAttributes = (attributes: Partial<typeof textAttributes>) => {
-    if (!stage) return;
-
-    stage.getActiveObjects().forEach((object) => {
-      if (object.type === 'text') {
-        // @ts-ignore
-        object.set(attributes);
-      }
-    });
-    stage.renderAll();
+    if (stage) {
+      stage.getActiveObjects().forEach((object) => {
+        if (object.type === 'text') {
+          // @ts-ignore
+          object.set(attributes);
+        }
+      });
+      stage.renderAll();
+      debounceSave();
+    }
 
     setTextAttributes((s) => ({ ...s, ...attributes }));
   };
@@ -92,17 +97,27 @@ const Toolbar: React.FC = () => {
     changeTextAttributes({ linethrough: !textAttributes.linethrough });
   };
 
-  const changeTextAlign = (align: string) => {
+  const onTextAlignChange = (align: string) => {
     changeTextAttributes({ textAlign: align });
   };
 
-  const changeFontSize = (size: number) => {
+  const onFontSizeChange = (size: number) => {
     changeTextAttributes({ fontSize: size });
   };
 
-  const duplicate = () => {
+  const onDuplicate = () => {
     copy();
     paste();
+  };
+
+  const onBringForward = () => {
+    bringForward();
+    save();
+  };
+
+  const onSendBackwards = () => {
+    sendBackwards();
+    save();
   };
 
   useOnSelectionChange((objects) => setSelectedObject(objects[0]));
@@ -230,7 +245,7 @@ const Toolbar: React.FC = () => {
                 className={cn('px-2 w-auto text-sm', textAttributes.textAlign === 'left' && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
-                onClick={() => changeTextAlign('left')}
+                onClick={() => onTextAlignChange('left')}
               >
                 <AlignLeft />
               </Button>
@@ -241,7 +256,7 @@ const Toolbar: React.FC = () => {
                 className={cn('px-2 w-auto text-sm', textAttributes.textAlign === 'center' && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
-                onClick={() => changeTextAlign('center')}
+                onClick={() => onTextAlignChange('center')}
               >
                 <AlignCenter />
               </Button>
@@ -252,13 +267,13 @@ const Toolbar: React.FC = () => {
                 className={cn('px-2 w-auto text-sm', textAttributes.textAlign === 'right' && 'bg-gray-100')}
                 variant="ghost"
                 size="icon"
-                onClick={() => changeTextAlign('right')}
+                onClick={() => onTextAlignChange('right')}
               >
                 <AlignRight />
               </Button>
             </Hint>
 
-            <InputNumber value={textAttributes.fontSize} onChange={changeFontSize} />
+            <InputNumber value={textAttributes.fontSize} onChange={onFontSizeChange} />
           </>
         )}
 
@@ -289,13 +304,13 @@ const Toolbar: React.FC = () => {
         )}
 
         <Hint label="Bring forward" side="bottom" sideOffset={5}>
-          <Button variant="ghost" size="icon" onClick={bringForward}>
+          <Button variant="ghost" size="icon" onClick={onBringForward}>
             <ArrowUp />
           </Button>
         </Hint>
 
         <Hint label="Send backwards" side="bottom" sideOffset={5}>
-          <Button variant="ghost" size="icon" onClick={sendBackwards}>
+          <Button variant="ghost" size="icon" onClick={onSendBackwards}>
             <ArrowDown />
           </Button>
         </Hint>
@@ -312,7 +327,7 @@ const Toolbar: React.FC = () => {
         </Hint>
 
         <Hint label="Duplicate" side="bottom" sideOffset={5}>
-          <Button variant="ghost" size="icon" onClick={duplicate}>
+          <Button variant="ghost" size="icon" onClick={onDuplicate}>
             <Copy />
           </Button>
         </Hint>

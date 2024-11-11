@@ -8,6 +8,7 @@ import Drawer from '@/components/drawer';
 import useDerivedState from '@/hooks/use-derived-state';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
+import { useEditorHistory } from '../providers/editor-history';
 import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const OpacitySidebar: React.FC = () => {
@@ -15,16 +16,24 @@ const OpacitySidebar: React.FC = () => {
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
   const { stage } = useEditorController();
+  const { save } = useEditorHistory();
 
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const [opacity, setOpacity] = useDerivedState(() => selectedObject?.get('opacity') ?? 1, [selectedObject]);
 
-  const changeOpacity = (opacity: number) => {
-    if (!stage) return;
+  const onOpacityChange = (opacity: number) => {
+    if (stage) {
+      stage.getActiveObjects().forEach((object) => object.set({ opacity }));
+      stage.renderAll();
+    }
 
-    stage.getActiveObjects().forEach((object) => object.set({ opacity }));
-    stage.renderAll();
     setOpacity(opacity);
+  };
+
+  const onOpacityCommit = () => {
+    if (stage?.getActiveObjects().length) {
+      save();
+    }
   };
 
   useOnSelectionChange((objects) => setSelectedObject(objects[0]));
@@ -38,7 +47,14 @@ const OpacitySidebar: React.FC = () => {
     >
       <ScrollArea className="w-80">
         <div className="space-y-4 p-4">
-          <Slider value={[opacity]} min={0} max={1} step={0.01} onValueChange={(value) => changeOpacity(value[0])} />
+          <Slider
+            value={[opacity]}
+            min={0}
+            max={1}
+            step={0.01}
+            onValueChange={(value) => onOpacityChange(value[0])}
+            onValueCommit={onOpacityCommit}
+          />
         </div>
       </ScrollArea>
     </Drawer>

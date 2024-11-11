@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
+import { useEditorHistory } from '../providers/editor-history';
 import { createFilter } from '../lib/helpers';
 
 const filters = [
@@ -38,6 +39,7 @@ const FilterSidebar: React.FC = () => {
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
   const { stage } = useEditorController();
+  const { save } = useEditorHistory();
 
   const changeFilter = (filter: string) => {
     if (!stage) return;
@@ -52,6 +54,7 @@ const FilterSidebar: React.FC = () => {
       }
     });
     stage.renderAll();
+    save();
   };
 
   return (

@@ -28,7 +28,7 @@ const ImageSidebar: React.FC = () => {
         throw new Error('Failed to fetch images');
       }
 
-      return (await response.json()).data;
+      return response.json();
     },
   });
 

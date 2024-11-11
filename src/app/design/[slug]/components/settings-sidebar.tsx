@@ -9,12 +9,14 @@ import ColorPicker from '@/components/color-picker';
 import useDerivedState from '@/hooks/use-derived-state';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
+import { useEditorHistory } from '../providers/editor-history';
 
 const SettingsSidebar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
   const { getWorkspace, setWorkspaceBackground, setWorkspaceSize } = useEditorController();
+  const { save } = useEditorHistory();
 
   const workspace = getWorkspace();
 
@@ -22,14 +24,19 @@ const SettingsSidebar: React.FC = () => {
   const [height, setHeight] = useDerivedState(() => workspace?.height ?? 0, [workspace]);
   const [background, setBackground] = useDerivedState(() => (workspace?.fill ?? '#ffffff') as string, [workspace]);
 
-  const changeBackground = (background: string) => {
-    setWorkspaceBackground(background);
-    setBackground(background);
+  const onColorChange = (color: string) => {
+    setWorkspaceBackground(color);
+    setBackground(color);
+  };
+
+  const onChangeComplete = () => {
+    save();
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setWorkspaceSize({ width, height });
+    save();
   };
 
   return (
@@ -57,7 +64,7 @@ const SettingsSidebar: React.FC = () => {
             </Button>
           </form>
 
-          <ColorPicker value={background} onChange={changeBackground} />
+          <ColorPicker value={background} onChange={onColorChange} onChangeComplete={onChangeComplete} />
         </div>
       </ScrollArea>
     </Drawer>

@@ -18,11 +18,10 @@ const app = new Hono().post(
       return c.json({ error: 'Email already in use' }, 400);
     }
 
-    await db.insert(users).values({
-      name,
-      email,
-      password: bcrypt.hashSync(password, 12),
-    });
+    await db
+      .insert(users)
+      .values({ name, email, password: bcrypt.hashSync(password, 12) })
+      .returning();
 
     return c.json(null, 200);
   }

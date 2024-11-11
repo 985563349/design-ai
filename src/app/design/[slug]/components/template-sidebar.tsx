@@ -27,19 +27,20 @@ const TemplateSidebar: React.FC = () => {
         throw new Error('Failed to fetch templates');
       }
 
-      return (await response.json()).data;
+      return response.json();
     },
   });
 
-  const addTemplate = (template: string) => {
+  const addTemplate = async (template: string) => {
     if (!stage || !template) return;
 
     pause();
     clear();
-    loadFromJSON(template, () => {
-      resume();
-      save();
-    });
+
+    await loadFromJSON(template);
+
+    resume();
+    save();
   };
 
   return (

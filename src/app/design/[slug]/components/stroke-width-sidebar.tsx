@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import Drawer from '@/components/drawer';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
+import { useEditorHistory } from '../providers/editor-history';
 import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const StrokeWidthSidebar: React.FC = () => {
@@ -21,24 +22,34 @@ const StrokeWidthSidebar: React.FC = () => {
   const setStrokeDashArray = useEditorStore((state) => state.setStrokeDashArray);
 
   const { stage } = useEditorController();
+  const { save } = useEditorHistory();
 
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   const effectiveStrokeWidth = selectedObject?.get('strokeWidth') ?? strokeWidth;
   const effectiveStrokeDashArray = selectedObject?.get('strokeDashArray') ?? strokeDashArray;
 
-  const changeStrokeWidth = (width: typeof strokeWidth) => {
-    if (!stage) return;
+  const onStrokeWidthChange = (width: number) => {
+    if (stage) {
+      stage.getActiveObjects().forEach((object) => object.set({ strokeWidth: width }));
+      stage.renderAll();
+    }
 
-    stage.getActiveObjects().forEach((object) => object.set({ strokeWidth: width }));
-    stage.renderAll();
     setStrokeWidth(width);
   };
 
-  const changeStrokeType = (type: typeof strokeDashArray) => {
-    if (!stage) return;
+  const onStrokeWidthCommit = () => {
+    if (stage?.getActiveObjects().length) {
+      save();
+    }
+  };
 
-    stage.getActiveObjects().forEach((object) => object.set({ strokeDashArray: type }));
-    stage.renderAll();
+  const onStrokeTypeChange = (type: number[]) => {
+    if (stage) {
+      stage.getActiveObjects().forEach((object) => object.set({ strokeDashArray: type }));
+      stage.renderAll();
+      save();
+    }
+
     setStrokeDashArray(type);
   };
 
@@ -55,25 +66,35 @@ const StrokeWidthSidebar: React.FC = () => {
         <div className="p-4 space-y-8">
           <div className="space-y-4">
             <Label className="text-sm">Stroke width</Label>
-            <Slider value={[effectiveStrokeWidth]} onValueChange={(value) => changeStrokeWidth(value[0])} />
+            <Slider
+              value={[effectiveStrokeWidth]}
+              onValueChange={(value) => onStrokeWidthChange(value[0])}
+              onValueCommit={onStrokeWidthCommit}
+            />
           </div>
 
           <div className="space-y-4">
             <Label className="text-sm">Stroke type</Label>
             <Button
-              className={cn('!p-4 w-full border-2 border-transparent', !effectiveStrokeDashArray.length && 'border-blue-500')}
+              className={cn(
+                '!p-4 w-full border-2 border-transparent',
+                !effectiveStrokeDashArray.length && 'border-blue-500'
+              )}
               variant="secondary"
               size="lg"
-              onClick={() => changeStrokeType([])}
+              onClick={() => onStrokeTypeChange([])}
             >
               <div className="rounded-full border-4 border-black w-full"></div>
             </Button>
 
             <Button
-              className={cn('!p-4 w-full border-2 border-transparent', effectiveStrokeDashArray.length && 'border-blue-500')}
+              className={cn(
+                '!p-4 w-full border-2 border-transparent',
+                effectiveStrokeDashArray.length && 'border-blue-500'
+              )}
               variant="secondary"
               size="lg"
-              onClick={() => changeStrokeType([5, 5])}
+              onClick={() => onStrokeTypeChange([5, 5])}
             >
               <div className="rounded-full border-4 border-dashed border-black w-full"></div>
             </Button>

@@ -30,7 +30,7 @@ const app = new Hono()
       return c.json({ error: 'Something went wrong' }, 400);
     }
 
-    return c.json({ data: url });
+    return c.json({ url });
   })
   .post('/remove-background', zValidator('json', z.object({ image: z.string() })), async (c) => {
     const { image } = c.req.valid('json');
@@ -39,7 +39,7 @@ const app = new Hono()
       image,
     };
 
-    const output: unknown = await replicate.run('cjwbw/rembg:fb8af171cfa1616ddcf1242c093f9c46bcada5ad4cf6f2fbe8b81b330ec5c003', {
+    const output = await replicate.run('cjwbw/rembg:fb8af171cfa1616ddcf1242c093f9c46bcada5ad4cf6f2fbe8b81b330ec5c003', {
       input,
     });
 
@@ -47,7 +47,7 @@ const app = new Hono()
       return c.json({ error: 'Something went wrong' }, 400);
     }
 
-    return c.json({ data: output as string });
+    return c.json({ url: output as unknown as string });
   });
 
 export default app;

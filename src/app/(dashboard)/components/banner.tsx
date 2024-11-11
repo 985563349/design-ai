@@ -23,14 +23,10 @@ const Banner: React.FC = () => {
 
       return response.json();
     },
-    onSuccess({ data }) {
+    onSuccess(data) {
       router.push(`/design/${data.id}`);
     },
   });
-
-  const onClick = () => {
-    mutation.mutate({ name: 'Untitled project', json: '', width: 900, height: 1200 });
-  };
 
   return (
     <div className="flex items-center gap-x-6 rounded-xl p-6 aspect-[5/1] text-white bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400">
@@ -42,8 +38,16 @@ const Banner: React.FC = () => {
 
       <div className="flex flex-col gap-y-2">
         <h1 className="text-3xl font-semibold">Visualize your ideas with Image AI</h1>
-        <p className="mb-2 text-sm">Turn inspiration into design in no time. Simply upload an image and let AI do the rest.</p>
-        <Button onClick={onClick} className="w-40" variant="secondary">
+        <p className="mb-2 text-sm">
+          Turn inspiration into design in no time. Simply upload an image and let AI do the rest.
+        </p>
+        <Button
+          onClick={() => {
+            mutation.mutate({ name: 'Untitled project', json: '', width: 900, height: 1200 });
+          }}
+          className="w-40"
+          variant="secondary"
+        >
           Start creating
           <ArrowRight />
         </Button>

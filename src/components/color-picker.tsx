@@ -3,9 +3,14 @@
 import dynamic from 'next/dynamic';
 import type { RGBColor } from 'react-color';
 import * as material from 'material-colors';
+import { useEffect, useRef } from 'react';
 
-const ChromePicker = dynamic(() => import('react-color').then((mod) => ({ default: mod.ChromePicker })), { ssr: false });
-const CirclePicker = dynamic(() => import('react-color').then((mod) => ({ default: mod.CirclePicker })), { ssr: false });
+const ChromePicker = dynamic(() => import('react-color').then((mod) => ({ default: mod.ChromePicker })), {
+  ssr: false,
+});
+const CirclePicker = dynamic(() => import('react-color').then((mod) => ({ default: mod.CirclePicker })), {
+  ssr: false,
+});
 
 const colors = [
   material.red['500'],
@@ -42,21 +47,54 @@ const rgbaObjectToString = (rgba: RGBColor | 'transparent') => {
 export interface ColorPickerProps {
   value?: string;
   onChange?: (value: string) => void;
+  onChangeComplete?: (value: string) => void;
 }
 
-const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange }) => {
+const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, onChangeComplete }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const changedColorRef = useRef<string | null>(null);
+
+  // Simulate changeComplete
+  useEffect(() => {
+    const container = containerRef.current;
+    const changedColor = changedColorRef.current;
+
+    if (!container) return;
+
+    const onMouseUp = () => {
+      if (changedColor) {
+        onChangeComplete?.(changedColor);
+        changedColorRef.current = null;
+      }
+    };
+
+    container.addEventListener('mouseup', onMouseUp);
+
+    return () => {
+      container.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [onChangeComplete]);
+
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8" ref={containerRef}>
       <ChromePicker
         className="border !rounded-lg !w-auto !shadow-none !overflow-hidden"
         color={value}
-        onChange={(color) => onChange?.(rgbaObjectToString(color.rgb))}
+        onChange={(value) => {
+          const color = rgbaObjectToString(value.rgb);
+          changedColorRef.current = color;
+          onChange?.(color);
+        }}
       />
       <CirclePicker
         className="!w-auto"
         color={value}
         colors={colors}
-        onChangeComplete={(color) => onChange?.(rgbaObjectToString(color.rgb))}
+        onChangeComplete={(value) => {
+          const color = rgbaObjectToString(value.rgb);
+          changedColorRef.current = color;
+          onChange?.(color);
+        }}
       />
     </div>
   );

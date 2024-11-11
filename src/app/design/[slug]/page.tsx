@@ -1,9 +1,9 @@
-import Editor from './components/editor';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
 import { client } from '@/lib/hono';
-import { cookies } from 'next/headers';
+import Editor from './components/editor';
 
 const fetchProject = async (id: string) => {
   const url = client.api.projects[':id'].$url({ param: { id } });
@@ -14,7 +14,7 @@ const fetchProject = async (id: string) => {
     throw new Error('Something went wrong');
   }
 
-  return (await response.json()).data;
+  return response.json();
 };
 
 export default async function Design({ params }: { params: Promise<{ slug: string }> }) {

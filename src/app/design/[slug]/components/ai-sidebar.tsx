@@ -44,8 +44,8 @@ const AiSidebar: React.FC = () => {
       return response.json();
     },
 
-    onSuccess({ data }) {
-      addImage(data);
+    onSuccess({ url }) {
+      addImage(url);
     },
   });
 
@@ -70,7 +70,7 @@ const AiSidebar: React.FC = () => {
             cols={30}
             rows={10}
             minLength={3}
-            placeholder="An astronaut riding a horse on mars, hd, dramatic lighting"
+            placeholder="Please describe the image you want to generate"
           />
           <Button className="w-full" type="submit" disabled={mutation.isPending}>
             {mutation.isPending && <Loader2 className="animate-spin" />}

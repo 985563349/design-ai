@@ -1,19 +1,32 @@
+'use client';
+
 import Link from 'next/link';
 import { useMutationState } from '@tanstack/react-query';
-import { useFilePicker } from 'use-file-picker';
+import { fileOpen, fileSave } from 'browser-fs-access';
 import { ChevronDown, MousePointerClick, Undo2, Redo2, Download, Loader } from 'lucide-react';
-import { BsCloudCheck, BsCloudSlash, BsFiletypeJpg, BsFiletypeJson, BsFiletypePng, BsFiletypeSvg } from 'react-icons/bs';
+import {
+  BsCloudCheck,
+  BsCloudSlash,
+  BsFiletypeJpg,
+  BsFiletypeJson,
+  BsFiletypePng,
+  BsFiletypeSvg,
+} from 'react-icons/bs';
 
-import { cn } from '@/lib/utils';
+import { base64toBlob, cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import Hint from '@/components/hint';
 import UserDropdown from '@/components/user-dropdown';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
 import { useEditorHistory } from '../providers/editor-history';
-import { downloadFile } from '../lib/helpers';
 
 const Navbar: React.FC = () => {
   const id = useEditorStore((state) => state.id);
@@ -33,34 +46,30 @@ const Navbar: React.FC = () => {
 
   const status = mutationState.at(-1);
 
-  const { openFilePicker } = useFilePicker({
-    accept: '.json',
-    onFilesSuccessfullySelected: (data: any) => {
-      const { plainFiles } = data;
-      const file = plainFiles?.[0];
+  const openFile = async () => {
+    try {
+      const file = await fileOpen({ extensions: ['.json'] });
+      const content = await file.text();
 
-      if (!file) return;
+      pause();
+      clear();
 
-      const reader = new FileReader();
+      await loadFromJSON(content);
 
-      reader.readAsText(file, 'UTF-8');
-      reader.onload = () => {
-        pause();
-        clear();
-        loadFromJSON(reader.result as string, () => {
-          resume();
-          save();
-        });
-      };
-    },
-  });
+      resume();
+      save();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const exportFile = (type: string) => () => {
+  const exportFile = (type: string) => async () => {
     const content = type === 'json' ? exportJSON() : exportImage();
 
     if (!content) return;
 
-    downloadFile(content, type);
+    const blob = await base64toBlob(content);
+    fileSave(blob, { extensions: [`.${type}`] });
   };
 
   return (
@@ -79,7 +88,7 @@ const Navbar: React.FC = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="start" className="min-w-60">
-            <DropdownMenuItem className="flex items-center gap-x-2" onClick={openFilePicker}>
+            <DropdownMenuItem className="flex items-center gap-x-2" onClick={openFile}>
               <BsFiletypeJson className="!size-7" />
               <div>
                 <p>Open</p>

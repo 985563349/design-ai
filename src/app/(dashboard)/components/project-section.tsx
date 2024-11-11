@@ -8,7 +8,12 @@ import { AlertTriangle, FileIcon, Loader, MoreHorizontal, Search } from 'lucide-
 
 import { client } from '@/lib/hono';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 
 const ProjectSection: React.FC = () => {
@@ -109,7 +114,8 @@ const ProjectSection: React.FC = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push(`/design/${project.id}`)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Rename</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/design/${project.id}`)}>Open</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => mutation.mutate(project.id)}>Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

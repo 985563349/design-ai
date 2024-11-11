@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import Drawer from '@/components/drawer';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
+import { useEditorHistory } from '../providers/editor-history';
 import useOnSelectionChange from '../hooks/use-on-selection-change';
 
 const fonts = [
@@ -38,6 +39,7 @@ const FontSidebar: React.FC = () => {
   const setFontFamily = useEditorStore((state) => state.setFontFamily);
 
   const { stage } = useEditorController();
+  const { save } = useEditorHistory();
 
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
   // @ts-ignore
@@ -52,6 +54,7 @@ const FontSidebar: React.FC = () => {
         }
       });
       stage.renderAll();
+      save();
     }
     setFontFamily(font);
   };

@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import { env } from 'hono/adapter';
-import { authHandler, initAuthConfig, verifyAuth } from '@hono/auth-js';
+import { initAuthConfig, verifyAuth } from '@hono/auth-js';
 
 import authConfig from '@/auth.config';
 import users from './users';
@@ -20,8 +20,10 @@ app.use(
   initAuthConfig((c) => ({ secret: env(c).AUTH_SECRET, ...authConfig }))
 );
 
-app.use('/users', authHandler());
-app.use('*', verifyAuth());
+app.use('/projects/*', verifyAuth());
+app.use('/templates/*', verifyAuth());
+app.use('/images/*', verifyAuth());
+app.use('/ai/*', verifyAuth());
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const routes = app
