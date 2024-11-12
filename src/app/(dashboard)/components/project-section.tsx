@@ -46,8 +46,9 @@ const ProjectSection: React.FC = () => {
       return response.json();
     },
 
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['project', { id: data.id }] });
     },
   });
 
@@ -114,7 +115,6 @@ const ProjectSection: React.FC = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Rename</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => router.push(`/design/${project.id}`)}>Open</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => mutation.mutate(project.id)}>Delete</DropdownMenuItem>
                       </DropdownMenuContent>
