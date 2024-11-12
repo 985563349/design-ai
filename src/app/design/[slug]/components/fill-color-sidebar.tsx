@@ -40,7 +40,7 @@ const FillColorSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'fill'}
+      open={activeTool === 'fill'}
       title="Fill Color"
       description="Add fill color to your element"
       onClose={() => setActiveTool('select')}

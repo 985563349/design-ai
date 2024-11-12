@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
 import {
   AlignCenter,
@@ -30,6 +30,7 @@ import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
 import { useEditorHistory } from '../providers/editor-history';
 import useOnSelectionChange from '../hooks/use-on-selection-change';
+import { isTextObject } from '../lib/helpers';
 
 const Toolbar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
@@ -40,10 +41,11 @@ const Toolbar: React.FC = () => {
 
   const { stage, copy, paste, bringForward, sendBackwards, remove } = useEditorController();
   const { save } = useEditorHistory();
-  const debounceSave = useCallback(debounce(save, 300), [save]);
+
+  const debounceSave = useMemo(() => debounce(save, 300), [save]);
 
   const [selectedObject, setSelectedObject] = useState<fabric.Object>();
-  const isSelectedText = selectedObject?.type === 'text';
+  const isSelectedText = isTextObject(selectedObject);
   const isSelectedImage = selectedObject?.type === 'image';
 
   const effectiveFillColor = selectedObject?.get('fill') ?? fillColor;
@@ -67,7 +69,7 @@ const Toolbar: React.FC = () => {
   const changeTextAttributes = (attributes: Partial<typeof textAttributes>) => {
     if (stage) {
       stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'text') {
+        if (isTextObject(object)) {
           // @ts-ignore
           object.set(attributes);
         }

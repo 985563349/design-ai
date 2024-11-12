@@ -40,7 +40,7 @@ const StrokeColorSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'stroke-color'}
+      open={activeTool === 'stroke-color'}
       title="Stroke Color"
       description="Add stroke color to your element"
       onClose={() => setActiveTool('select')}

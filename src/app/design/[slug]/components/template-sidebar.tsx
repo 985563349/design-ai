@@ -7,11 +7,14 @@ import { AlertTriangle, Loader } from 'lucide-react';
 import { client } from '@/lib/hono';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Drawer from '@/components/drawer';
+import { useDialog } from '@/providers/dialog';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
 import { useEditorHistory } from '../providers/editor-history';
 
 const TemplateSidebar: React.FC = () => {
+  const { confirm } = useDialog();
+
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
@@ -32,20 +35,30 @@ const TemplateSidebar: React.FC = () => {
   });
 
   const addTemplate = async (template: string) => {
-    if (!stage || !template) return;
+    try {
+      if (!stage || !template) return;
 
-    pause();
-    clear();
+      await confirm({
+        title: 'Are you sure?',
+        body: 'You are about to replace the current project with this template.',
+        actionText: 'Confirm',
+      });
 
-    await loadFromJSON(template);
+      pause();
+      clear();
 
-    resume();
-    save();
+      await loadFromJSON(template);
+
+      resume();
+      save();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <Drawer
-      visible={activeTool === 'templates'}
+      open={activeTool === 'templates'}
       title="Templates"
       description="Choose from a variety of templates to get started"
       onClose={() => setActiveTool('select')}

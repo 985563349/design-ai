@@ -57,7 +57,7 @@ const StrokeWidthSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'stroke-width'}
+      open={activeTool === 'stroke-width'}
       title="Stroke Options"
       description="Modify the stroke of your element"
       onClose={() => setActiveTool('select')}

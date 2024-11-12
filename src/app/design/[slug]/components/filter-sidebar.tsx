@@ -6,7 +6,7 @@ import Drawer from '@/components/drawer';
 import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
 import { useEditorHistory } from '../providers/editor-history';
-import { createFilter } from '../lib/helpers';
+import { createImageFilter } from '../lib/helpers';
 
 const filters = [
   'none',
@@ -47,7 +47,7 @@ const FilterSidebar: React.FC = () => {
     stage.getActiveObjects().forEach((object) => {
       if (object.type === 'image') {
         const imageObject = object as fabric.Image;
-        const effect = createFilter(filter);
+        const effect = createImageFilter(filter);
 
         imageObject.filters = effect ? [effect] : [];
         imageObject.applyFilters();
@@ -59,7 +59,7 @@ const FilterSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'filter'}
+      open={activeTool === 'filter'}
       title="Filters"
       description="Apply a filter to selected image"
       onClose={() => setActiveTool('select')}

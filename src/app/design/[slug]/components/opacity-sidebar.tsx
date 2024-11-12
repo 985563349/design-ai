@@ -40,7 +40,7 @@ const OpacitySidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'opacity'}
+      open={activeTool === 'opacity'}
       title="Opacity"
       description="Change the opacity of the select opacity"
       onClose={() => setActiveTool('select')}

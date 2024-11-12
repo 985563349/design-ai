@@ -56,7 +56,7 @@ const DrawSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'draw'}
+      open={activeTool === 'draw'}
       title="Drawing mode"
       description="Modify brush settings"
       onClose={() => setActiveTool('select')}

@@ -42,24 +42,26 @@ const $patch = client.api.projects[':id'].$patch;
 const Editor: React.FC<EditorProps> = ({ id, width, height, initialState }) => {
   const [stage, setStage] = useState<fabric.Canvas>();
 
-  const { mutate } = useMutation<InferResponseType<typeof $patch, 200>, Error, InferRequestType<typeof $patch>['json']>({
-    mutationKey: ['projects', id],
-    mutationFn: async (data) => {
-      const response = await $patch({ param: { id }, json: data });
+  const { mutate } = useMutation<InferResponseType<typeof $patch, 200>, Error, InferRequestType<typeof $patch>['json']>(
+    {
+      mutationKey: ['projects', id],
+      mutationFn: async (data) => {
+        const response = await $patch({ param: { id }, json: data });
 
-      if (!response.ok) {
-        throw new Error('Something went wrong');
-      }
+        if (!response.ok) {
+          throw new Error('Something went wrong');
+        }
 
-      return response.json();
-    },
-  });
+        return response.json();
+      },
+    }
+  );
 
   useEffect(() => {
     if (!stage) return;
 
     // Synchronize to the cloud
-    const onSaved = debounce((event: any) => mutate(event), 500);
+    const onSaved = debounce((event: any) => mutate(event), 1000);
     stage.on('saved', onSaved);
 
     return () => {

@@ -15,7 +15,7 @@ const SettingsSidebar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
-  const { getWorkspace, setWorkspaceBackground, setWorkspaceSize } = useEditorController();
+  const { getWorkspace, setWorkspaceColor, setWorkspaceSize } = useEditorController();
   const { save } = useEditorHistory();
 
   const workspace = getWorkspace();
@@ -25,7 +25,7 @@ const SettingsSidebar: React.FC = () => {
   const [background, setBackground] = useDerivedState(() => (workspace?.fill ?? '#ffffff') as string, [workspace]);
 
   const onColorChange = (color: string) => {
-    setWorkspaceBackground(color);
+    setWorkspaceColor(color);
     setBackground(color);
   };
 
@@ -41,7 +41,7 @@ const SettingsSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'settings'}
+      open={activeTool === 'settings'}
       title="Settings"
       description="Change the look of your workspace"
       onClose={() => setActiveTool('select')}

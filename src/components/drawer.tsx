@@ -3,7 +3,7 @@ import { ChevronsLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface DrawerProps {
-  visible?: boolean;
+  open?: boolean;
   className?: string;
   title: string;
   description?: string;
@@ -11,9 +11,9 @@ export interface DrawerProps {
   onClose?: () => void;
 }
 
-const Drawer: React.FC<DrawerProps> = ({ visible, className, title, description, children, onClose }) => {
+const Drawer: React.FC<DrawerProps> = ({ open, className, title, description, children, onClose }) => {
   return (
-    <aside className={cn('relative z-10 flex flex-col h-full border-r bg-white', className, !visible && 'hidden')}>
+    <aside className={cn('relative z-10 flex flex-col h-full border-r bg-white', className, !open && 'hidden')}>
       <div className="p-4 border-b space-y-1">
         <p className="text-sm font-medium">{title}</p>
         {description && <p className="text-xs text-muted-foreground">{description}</p>}

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { SessionProvider } from 'next-auth/react';
 
-import { auth } from '@/auth';
 import { Toaster } from '@/components/ui/sonner';
-import Providers from './providers';
+import { SessionProvider } from '@/providers/session';
+import { QueryClientProvider } from '@/providers/query-client';
+import { DialogProvider } from '@/providers/dialog';
 
 import './globals.css';
 
@@ -29,13 +29,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
-
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <SessionProvider session={session}>
-          <Providers>{children}</Providers>
+        <SessionProvider>
+          <QueryClientProvider>
+            <DialogProvider>{children}</DialogProvider>
+          </QueryClientProvider>
         </SessionProvider>
         <Toaster />
       </body>

@@ -10,6 +10,7 @@ import { useEditorStore } from '../providers/editor-store';
 import { useEditorController } from '../providers/editor-controller';
 import { useEditorHistory } from '../providers/editor-history';
 import useOnSelectionChange from '../hooks/use-on-selection-change';
+import { isTextObject } from '../lib/helpers';
 
 const fonts = [
   'Arial',
@@ -48,7 +49,7 @@ const FontSidebar: React.FC = () => {
   const changeFontFamily = (font: typeof fontFamily) => {
     if (stage) {
       stage.getActiveObjects().forEach((object) => {
-        if (object.type === 'text') {
+        if (isTextObject(object)) {
           // @ts-ignore
           object.set({ fontFamily: font });
         }
@@ -63,7 +64,7 @@ const FontSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'font'}
+      open={activeTool === 'font'}
       title="Font"
       description="Change the text font"
       onClose={() => setActiveTool('select')}

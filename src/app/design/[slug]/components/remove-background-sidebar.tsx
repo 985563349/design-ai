@@ -60,7 +60,7 @@ const RemoveBackgroundSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'remove-background'}
+      open={activeTool === 'remove-background'}
       title="Background removal"
       description="Remove background from image using AI"
       onClose={() => setActiveTool('select')}

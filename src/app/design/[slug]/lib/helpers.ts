@@ -1,22 +1,22 @@
 import { fabric } from 'fabric';
 
-export const createCircle = (options?: fabric.ICircleOptions) => {
+export const createCircleShapeObject = (options?: fabric.ICircleOptions) => {
   return new fabric.Circle({ radius: 100, ...options });
 };
 
-export const createRectangle = (options?: fabric.IRectOptions) => {
+export const createRectangleShapeObject = (options?: fabric.IRectOptions) => {
   return new fabric.Rect({ width: 200, height: 200, ...options });
 };
 
-export const createTriangle = (options?: fabric.ITriangleOptions) => {
+export const createTriangleShapeObject = (options?: fabric.ITriangleOptions) => {
   return new fabric.Triangle({ width: 200, height: 200, ...options });
 };
 
-export const createText = (value: string, options?: fabric.ITextboxOptions) => {
+export const createTextShapeObject = (value: string, options?: fabric.ITextboxOptions) => {
   return new fabric.Textbox(value, { type: 'text', fontSize: 32, fontWeight: 400, fontFamily: 'Arial', ...options });
 };
 
-export const createFilter = (value: string) => {
+export const createImageFilter = (value: string) => {
   switch (value) {
     case 'grayscale':
       return new fabric.Image.filters.Grayscale();
@@ -116,13 +116,8 @@ export const createFilter = (value: string) => {
   }
 };
 
-export function downloadFile(content: string, type: string) {
-  const a = document.createElement('a');
+export function isTextObject(object?: fabric.Object) {
+  if (!object?.type) return false;
 
-  a.href = content;
-  a.download = `${crypto.randomUUID()}.${type}`;
-
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  return ['text', 'textbox', 'i-text'].includes(object.type);
 }

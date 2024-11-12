@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { fabric } from 'fabric';
 import { Loader2 } from 'lucide-react';
 
 import { client } from '@/lib/hono';
@@ -16,22 +15,7 @@ const AiSidebar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
-  const { stage, getWorkspace, add } = useEditorController();
-
-  const addImage = (url: string) => {
-    if (!stage) return;
-
-    const callback = (image: fabric.Image) => {
-      const workspace = getWorkspace();
-
-      image.scaleToWidth(workspace?.width ?? 0);
-      image.scaleToHeight(workspace?.height ?? 0);
-
-      add(image);
-    };
-
-    fabric.Image.fromURL(url, callback, { crossOrigin: 'anonymous' });
-  };
+  const { addImageShapeObject } = useEditorController();
 
   const mutation = useMutation({
     mutationFn: async (prompt: string) => {
@@ -44,14 +28,12 @@ const AiSidebar: React.FC = () => {
       return response.json();
     },
 
-    onSuccess({ url }) {
-      addImage(url);
-    },
+    onSuccess: ({ url }) => addImageShapeObject(url),
   });
 
   return (
     <Drawer
-      visible={activeTool === 'ai'}
+      open={activeTool === 'ai'}
       title="AI"
       description="Generate an image using AI"
       onClose={() => setActiveTool('select')}

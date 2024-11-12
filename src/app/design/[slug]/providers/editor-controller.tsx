@@ -6,7 +6,8 @@ import { fabric } from 'fabric';
 export type EditorControllerApi = {
   stage?: fabric.Canvas;
   getWorkspace: () => fabric.Object | void;
-  add: (object: fabric.Object) => void;
+  addShapeObject: (object: fabric.Object) => void;
+  addImageShapeObject: (url: string) => void;
   remove: () => void;
   copy: () => void;
   paste: () => void;
@@ -16,7 +17,7 @@ export type EditorControllerApi = {
   zoomIn: () => void;
   zoomOut: () => void;
   zoomReset: () => void;
-  setWorkspaceBackground: (background: string) => void;
+  setWorkspaceColor: (background: string) => void;
   setWorkspaceSize: (size: Record<'width' | 'height', number>) => void;
   exportImage: () => string | void;
   exportJSON: () => string | void;
@@ -39,7 +40,7 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
     return stage.getObjects().find((object) => object.name === 'workspace');
   };
 
-  const add = (object: fabric.Object) => {
+  const addShapeObject = (object: fabric.Object) => {
     if (!stage) return;
 
     const workspace = getWorkspace();
@@ -51,6 +52,21 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
     stage._centerObject(object, center);
     stage.setActiveObject(object);
     stage.add(object);
+  };
+
+  const addImageShapeObject = (url: string) => {
+    if (!stage) return;
+
+    const callback = (image: fabric.Image) => {
+      const workspace = getWorkspace();
+
+      image.scaleToWidth(workspace?.width ?? 0);
+      image.scaleToHeight(workspace?.height ?? 0);
+
+      addShapeObject(image);
+    };
+
+    fabric.Image.fromURL(url, callback, { crossOrigin: 'anonymous' });
   };
 
   const remove = () => {
@@ -149,12 +165,12 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
     stage.fire('resize');
   };
 
-  const setWorkspaceBackground = (background: string) => {
+  const setWorkspaceColor = (color: string) => {
     const workspace = getWorkspace();
 
     if (!stage || !workspace) return;
 
-    workspace.set({ fill: background });
+    workspace.set({ fill: color });
     stage.renderAll();
   };
 
@@ -220,7 +236,8 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
       value={{
         stage,
         getWorkspace,
-        add,
+        addShapeObject,
+        addImageShapeObject,
         remove,
         copy,
         paste,
@@ -230,7 +247,7 @@ export const EditorControllerProvider: React.FC<EditorControllerProviderProps> =
         zoomIn,
         zoomOut,
         zoomReset,
-        setWorkspaceBackground,
+        setWorkspaceColor,
         setWorkspaceSize,
         exportImage,
         exportJSON,

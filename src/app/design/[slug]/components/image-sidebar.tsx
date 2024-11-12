@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { fabric } from 'fabric';
 import { fileOpen } from 'browser-fs-access';
 import { AlertTriangle, ImageIcon, Loader } from 'lucide-react';
 
@@ -18,7 +17,7 @@ const ImageSidebar: React.FC = () => {
   const activeTool = useEditorStore((state) => state.activeTool);
   const setActiveTool = useEditorStore((state) => state.setActiveTool);
 
-  const { stage, getWorkspace, add } = useEditorController();
+  const { addImageShapeObject } = useEditorController();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['images'],
@@ -33,28 +32,13 @@ const ImageSidebar: React.FC = () => {
     },
   });
 
-  const addImage = (url: string) => {
-    if (!stage) return;
-
-    const callback = (image: fabric.Image) => {
-      const workspace = getWorkspace();
-
-      image.scaleToWidth(workspace?.width ?? 0);
-      image.scaleToHeight(workspace?.height ?? 0);
-
-      add(image);
-    };
-
-    fabric.Image.fromURL(url, callback, { crossOrigin: 'anonymous' });
-  };
-
   const openImage = async () => {
     try {
       const file = await fileOpen({ extensions: ['.png', '.jpg', '.jpeg', '.svg', '.webp'] });
       const reader = new FileReader();
 
       reader.readAsDataURL(file);
-      reader.onload = () => addImage(reader.result as string);
+      reader.onload = () => addImageShapeObject(reader.result as string);
     } catch (error) {
       console.log(error);
     }
@@ -62,7 +46,7 @@ const ImageSidebar: React.FC = () => {
 
   return (
     <Drawer
-      visible={activeTool === 'images'}
+      open={activeTool === 'images'}
       title="Images"
       description="Add images to your canvas"
       onClose={() => setActiveTool('select')}
@@ -95,7 +79,7 @@ const ImageSidebar: React.FC = () => {
                 <div
                   key={image.id}
                   className="relative border rounded-sm w-full h-28 group hover:opacity-75 transition bg-muted overflow-hidden cursor-pointer"
-                  onClick={() => addImage(image.urls.regular)}
+                  onClick={() => addImageShapeObject(image.urls.regular)}
                 >
                   <Image className="object-cover" fill src={image.urls.small} alt={image.alt_description ?? 'Image'} />
                   <Link
